@@ -1,54 +1,27 @@
-import { AbsoluteFill, Img, useCurrentFrame, useVideoConfig, interpolate, Sequence } from 'remotion';
+import { AbsoluteFill, Sequence, useVideoConfig } from 'remotion';
+import { AnimatedScene, type SceneData, type SceneStyle } from '../components/AnimatedScene';
 
-type Scene = {
-  src: string;
-  caption?: string;
-  transition: 'fade' | 'slide' | 'zoom' | 'none';
-  durationSeconds: number;
-};
+/**
+ * HorizontalPromo — 16:9 (1920×1080)
+ * Stitches animated scenes together with Remotion <Sequence>.
+ *
+ * This composition is data-driven: pass a `scenes` array and `style`
+ * and the entire video is generated programmatically.
+ */
 
-type PromoProps = {
-  scenes: Scene[];
-  appName: string;
-  appIconUrl?: string;
-};
+export type { SceneData, SceneStyle };
 
-const transitionIn = (frame: number, fps: number, type: string) => {
-  switch (type) {
-    case 'fade':
-      return { opacity: interpolate(frame, [0, fps], [0, 1], { extrapolateRight: 'clamp' }) };
-    case 'slide':
-      return {
-        opacity: interpolate(frame, [0, fps * 0.5], [0, 1], { extrapolateRight: 'clamp' }),
-        transform: `translateX(${interpolate(frame, [0, fps], [-100, 0], { extrapolateRight: 'clamp' })}px)`,
-      };
-    case 'zoom':
-      return {
-        opacity: interpolate(frame, [0, fps * 0.5], [0, 1], { extrapolateRight: 'clamp' }),
-        transform: `scale(${interpolate(frame, [0, fps * 2], [1.15, 1], { extrapolateRight: 'clamp' })})`,
-      };
-    default:
-      return {};
-  }
-};
+export interface PromoProps {
+  scenes: SceneData[];
+  style: SceneStyle;
+}
 
-const transitionOut = (frame: number, durationInFrames: number, fps: number) => {
-  return {
-    opacity: interpolate(frame, [durationInFrames - fps, durationInFrames], [1, 0], {
-      extrapolateLeft: 'clamp',
-      extrapolateRight: 'clamp',
-    }),
-  };
-};
-
-export const HorizontalPromo: React.FC<PromoProps> = ({ scenes, appName }) => {
-  const frame = useCurrentFrame();
+export const HorizontalPromo: React.FC<PromoProps> = ({ scenes, style }) => {
   const { fps } = useVideoConfig();
-
   let currentFrame = 0;
 
   return (
-    <AbsoluteFill style={{ backgroundColor: '#0a0a0a' }}>
+    <AbsoluteFill style={{ backgroundColor: style.bgColor }}>
       {scenes.map((scene, i) => {
         const durationInFrames = Math.round(scene.durationSeconds * fps);
         const startFrame = currentFrame;
@@ -56,62 +29,17 @@ export const HorizontalPromo: React.FC<PromoProps> = ({ scenes, appName }) => {
 
         return (
           <Sequence key={i} from={startFrame} durationInFrames={durationInFrames}>
-            <AbsoluteFill style={{ ...transitionIn(frame - startFrame, fps, scene.transition) }}>
-              <Img
-                src={scene.src}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'contain',
-                }}
-              />
-            </AbsoluteFill>
-            {scene.caption && (
-              <AbsoluteFill
-                style={{
-                  justifyContent: 'flex-end',
-                  alignItems: 'center',
-                  paddingBottom: 80,
-                }}
-              >
-                <div
-                  style={{
-                    color: 'white',
-                    fontSize: 48,
-                    fontFamily: 'sans-serif',
-                    fontWeight: 700,
-                    textShadow: '0 2px 10px rgba(0,0,0,0.8)',
-                    textAlign: 'center',
-                  }}
-                >
-                  {scene.caption}
-                </div>
-              </AbsoluteFill>
-            )}
+            <AnimatedScene
+              scene={scene}
+              sceneIndex={i}
+              totalScenes={scenes.length}
+              startFrame={startFrame}
+              style={style}
+              isLast={i === scenes.length - 1}
+            />
           </Sequence>
         );
       })}
-
-      {/* App name watermark */}
-      <AbsoluteFill
-        style={{
-          justifyContent: 'flex-start',
-          alignItems: 'flex-end',
-          flexDirection: 'row',
-          padding: 40,
-        }}
-      >
-        <div
-          style={{
-            color: 'rgba(255,255,255,0.6)',
-            fontSize: 28,
-            fontFamily: 'sans-serif',
-            fontWeight: 600,
-          }}
-        >
-          {appName}
-        </div>
-      </AbsoluteFill>
     </AbsoluteFill>
   );
 };

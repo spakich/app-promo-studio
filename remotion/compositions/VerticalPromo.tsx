@@ -1,85 +1,45 @@
-import { AbsoluteFill, Img, useCurrentFrame, useVideoConfig, interpolate, Sequence } from 'remotion';
+import { AbsoluteFill, Sequence, useVideoConfig } from 'remotion';
+import { AnimatedScene, type SceneData, type SceneStyle } from '../components/AnimatedScene';
 
-type Scene = {
-  src: string;
-  caption?: string;
-  transition: 'fade' | 'slide' | 'zoom' | 'none';
-  durationSeconds: number;
-};
+/**
+ * VerticalPromo — 9:16 (1080×1920)
+ * Same engine as HorizontalPromo, just different dimensions.
+ * Caption sizes are automatically larger for vertical viewing.
+ */
 
-type PromoProps = {
-  scenes: Scene[];
-  appName: string;
-  appIconUrl?: string;
-};
+export interface PromoProps {
+  scenes: SceneData[];
+  style: SceneStyle;
+}
 
-export const VerticalPromo: React.FC<PromoProps> = ({ scenes, appName }) => {
-  const frame = useCurrentFrame();
+export const VerticalPromo: React.FC<PromoProps> = ({ scenes, style }) => {
   const { fps } = useVideoConfig();
-
   let currentFrame = 0;
 
+  // Scale up fonts for vertical viewing (closer to screen)
+  const verticalStyle: SceneStyle = {
+    ...style,
+    captionSize: Math.round(style.captionSize * 1.4),
+    subtitleSize: Math.round(style.subtitleSize * 1.4),
+  };
+
   return (
-    <AbsoluteFill style={{ backgroundColor: '#0a0a0a' }}>
+    <AbsoluteFill style={{ backgroundColor: style.bgColor }}>
       {scenes.map((scene, i) => {
         const durationInFrames = Math.round(scene.durationSeconds * fps);
         const startFrame = currentFrame;
         currentFrame += durationInFrames;
 
-        const localFrame = frame - startFrame;
-        const isLastHalf = localFrame > durationInFrames / 2;
-
         return (
           <Sequence key={i} from={startFrame} durationInFrames={durationInFrames}>
-            <AbsoluteFill
-              style={{
-                opacity: interpolate(
-                  localFrame,
-                  [0, fps * 0.5, durationInFrames - fps * 0.5, durationInFrames],
-                  [0, 1, 1, 0],
-                  { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
-                ),
-              }}
-            >
-              <Img
-                src={scene.src}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  transform: scene.transition === 'zoom'
-                    ? `scale(${interpolate(localFrame, [0, durationInFrames], [1, 1.1])})`
-                    : 'scale(1)',
-                }}
-              />
-              {scene.caption && (
-                <AbsoluteFill
-                  style={{
-                    justifyContent: 'flex-end',
-                    alignItems: 'center',
-                    paddingBottom: 120,
-                    background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 40%)',
-                  }}
-                >
-                  <div
-                    style={{
-                      color: 'white',
-                      fontSize: 56,
-                      fontFamily: 'sans-serif',
-                      fontWeight: 700,
-                      textShadow: '0 2px 10px rgba(0,0,0,0.8)',
-                      textAlign: 'center',
-                      maxWidth: '85%',
-                    }}
-                  >
-                    {scene.caption}
-                    {i === 0 && (
-                      <div style={{ fontSize: 32, marginTop: 16, opacity: 0.8 }}>{appName}</div>
-                    )}
-                  </div>
-                </AbsoluteFill>
-              )}
-            </AbsoluteFill>
+            <AnimatedScene
+              scene={scene}
+              sceneIndex={i}
+              totalScenes={scenes.length}
+              startFrame={startFrame}
+              style={verticalStyle}
+              isLast={i === scenes.length - 1}
+            />
           </Sequence>
         );
       })}
