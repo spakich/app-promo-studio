@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build
+dist/
+build/
+.remotion/
+
+# Environment
+.env
+.env.local
+
+# Supabase
+supabase/.branches
+supabase/.temp
+
+# Output
+output/
+capture/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*

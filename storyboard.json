@@ -1,0 +1,81 @@
+{
+  "project": "ZEFIL Terrain",
+  "tagline": "Gérez vos chantiers fibre optique en temps réel",
+  "duration_seconds": 24,
+  "resolution": { "width": 1920, "height": 1080 },
+  "fps": 30,
+  "scenes": [
+    {
+      "id": "intro",
+      "image": "capture/01-home.png",
+      "duration": 4,
+      "animation": "zoom_in_center",
+      "zoom_from": 1.0,
+      "zoom_to": 1.25,
+      "title": "ZEFIL Terrain",
+      "subtitle": "NGE Énergies Solutions",
+      "caption_animation": "fade_in_up",
+      "position": { "x": "center", "y": "center" }
+    },
+    {
+      "id": "chantiers",
+      "image": "capture/01-home.png",
+      "duration": 4,
+      "animation": "pan_right_zoom",
+      "zoom_from": 1.3,
+      "zoom_to": 1.5,
+      "title": "Suivez vos chantiers",
+      "subtitle": "Statuts en temps réel, à faire, en cours, terminé",
+      "caption_animation": "fade_in_right",
+      "position": { "x": "left", "y": "center" }
+    },
+    {
+      "id": "carte",
+      "image": "capture/02-carte.png",
+      "duration": 5,
+      "animation": "zoom_to_detail",
+      "zoom_from": 1.0,
+      "zoom_to": 1.35,
+      "title": "Carte interactive",
+      "subtitle": "BPE, chambres, armoires — géolocalisés",
+      "caption_animation": "fade_in_up",
+      "position": { "x": "center", "y": "bottom" }
+    },
+    {
+      "id": "etapes",
+      "image": "capture/03-etapes.png",
+      "duration": 5,
+      "animation": "pan_down",
+      "zoom_from": 1.4,
+      "zoom_to": 1.4,
+      "title": "Étapes de raccordement",
+      "subtitle": "Soudures, brassages, tirage câble — suivis étape par étape",
+      "caption_animation": "slide_in_left",
+      "position": { "x": "right", "y": "center" }
+    },
+    {
+      "id": "infos",
+      "image": "capture/04-infos.png",
+      "duration": 3,
+      "animation": "zoom_out",
+      "zoom_from": 1.3,
+      "zoom_to": 1.0,
+      "title": "Fiche technique complète",
+      "subtitle": "DOE, relevés photos, documents",
+      "caption_animation": "fade_in",
+      "position": { "x": "center", "y": "center" }
+    },
+    {
+      "id": "outro",
+      "image": "capture/01-home.png",
+      "duration": 3,
+      "animation": "fade_out_zoom",
+      "zoom_from": 1.0,
+      "zoom_to": 1.15,
+      "title": "ZEFIL Terrain",
+      "subtitle": "zefil-terrain.vercel.app",
+      "caption_animation": "fade_in_scale",
+      "position": { "x": "center", "y": "center" }
+    }
+  ]
+}
