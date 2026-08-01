@@ -34,14 +34,15 @@ export function EditorPage() {
     const url = URL.createObjectURL(file);
     addScreenshot({
       id: crypto.randomUUID(),
+      url,
       storage_path: url,
       display_order: screenshots.length,
-      transition_type: 'fade',
-      duration_seconds: 3,
+      transition: 'fade',
+      duration: 3,
     });
   };
 
-  const totalDuration = screenshots.reduce((sum, s) => sum + s.duration_seconds, 0);
+  const totalDuration = screenshots.reduce((sum, s) => sum + s.duration, 0);
   const dims = format === 'horizontal'
     ? { w: 560, h: 315 }
     : format === 'vertical'
@@ -149,7 +150,7 @@ export function EditorPage() {
                     <p className="text-xs text-[var(--text-tertiary)] mt-1">Ajoutez des screenshots pour commencer</p>
                   </div>
                 ) : (
-                  <img src={screenshots[0]?.storage_path} alt="" className="w-full h-full object-cover" />
+                  <img src={screenshots[0]?.url} alt="" className="w-full h-full object-cover" />
                 )}
               </div>
               {/* Format badge */}
@@ -165,7 +166,7 @@ export function EditorPage() {
                 {screenshots.map((s, i) => (
                   <div key={s.id} className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded bg-[var(--bg-surface-3)] overflow-hidden ring-1 ring-white/5">
-                      <img src={s.storage_path} alt="" className="w-full h-full object-cover" />
+                      <img src={s.url} alt="" className="w-full h-full object-cover" />
                     </div>
                     {i < screenshots.length - 1 && <div className="w-1 h-1 rounded-full bg-[var(--text-tertiary)]" />}
                   </div>

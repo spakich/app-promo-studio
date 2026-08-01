@@ -6,11 +6,15 @@ export type ProjectStatus = 'draft' | 'rendering' | 'completed' | 'failed';
 
 export interface Screenshot {
   id: string;
+  /** Local object URL during upload, then Supabase public URL */
+  url: string;
   storage_path: string;
   display_order: number;
   caption?: string;
-  transition_type: TransitionType;
-  duration_seconds: number;
+  /** Short caption / tagline shown over the screenshot */
+  subtitle?: string;
+  transition: TransitionType;
+  duration: number;
   metadata?: Record<string, any>;
 }
 
