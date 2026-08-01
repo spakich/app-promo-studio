@@ -3,9 +3,9 @@ import { Link, useLocation } from 'react-router-dom';
 import { Film, LayoutGrid, FolderOpen, Sparkles, Settings, Plus } from 'lucide-react';
 
 const navItems = [
+  { icon: Sparkles, label: 'Analyse magique', path: '/magic' },
   { icon: LayoutGrid, label: 'Dashboard', path: '/' },
   { icon: FolderOpen, label: 'Projets', path: '/projects' },
-  { icon: Sparkles, label: 'Templates', path: '/templates' },
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {
