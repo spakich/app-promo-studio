@@ -1,4 +1,4 @@
-import { AbsoluteFill, Img, useCurrentFrame, useVideoConfig, interpolate } from 'remotion';
+import { AbsoluteFill, Img, useCurrentFrame, useVideoConfig, interpolate, staticFile } from 'remotion';
 import { kenBurns, zoomPresets } from '../animations/zoom';
 import { transitionIn, transitionOut, transitionDurations, type TransitionType } from '../animations/transitions';
 import { fadeUp, wordStagger, blurIn } from '../animations/textEffects';
@@ -12,6 +12,8 @@ export interface SceneData {
   /** Transition to the NEXT scene */
   transitionOut?: TransitionType;
   durationSeconds: number;
+  /** Visual focal point detected by the capture bot (0-1 normalized) */
+  focal?: { x: number; y: number };
 }
 
 export interface SceneStyle {
@@ -41,10 +43,13 @@ export const AnimatedScene: React.FC<{
   const durationInFrames = Math.round(scene.durationSeconds * fps);
   const localFrame = frame - startFrame;
 
-  // Ken Burns
+  // Ken Burns — the detected focal point becomes the camera's target
   const presetName = scene.zoomPreset || 'center';
   const preset = zoomPresets[presetName] || zoomPresets.center;
-  const kb = kenBurns(localFrame, fps, durationInFrames, preset.config);
+  const config = scene.focal
+    ? { ...preset.config, endX: scene.focal.x, endY: scene.focal.y }
+    : preset.config;
+  const kb = kenBurns(localFrame, fps, durationInFrames, config);
 
   // Transition (fade to next scene unless last)
   const tType = scene.transitionOut || 'crossDissolve';
@@ -60,7 +65,7 @@ export const AnimatedScene: React.FC<{
       {/* Image with Ken Burns */}
       <AbsoluteFill style={{ overflow: 'hidden', ...outState }}>
         <Img
-          src={scene.src}
+          src={scene.src.startsWith('http') ? scene.src : staticFile(scene.src)}
           style={{
             width: '100%',
             height: '100%',

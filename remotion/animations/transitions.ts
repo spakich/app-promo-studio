@@ -114,6 +114,11 @@ export function transitionOut(
   durationInFrames: number,
   cfg: TransitionConfig
 ): { opacity: number; transform: string; filter?: string } {
+  // No transition (e.g. last scene): identity state, guard against
+  // degenerate interpolate ranges ([d,d] crashes Remotion).
+  if (!cfg.durationFrames || cfg.durationFrames <= 0) {
+    return { opacity: 1, transform: 'scale(1)' };
+  }
   // Time before the scene ends when transition starts
   const transitionStart = durationInFrames - cfg.durationFrames;
   const t = getEasing(cfg.easing)(

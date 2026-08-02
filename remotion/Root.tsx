@@ -53,6 +53,15 @@ export const RemotionRoot: React.FC = () => {
         fps={30}
         width={1920}
         height={1080}
+        calculateMetadata={({ props, defaultProps }) => {
+          const scenes = (props as any).scenes || (defaultProps as any).scenes || [];
+          const fpsVal = 30;
+          const frames = scenes.reduce(
+            (acc: number, s: any) => acc + Math.round((s.durationSeconds || 4) * fpsVal),
+            0
+          );
+          return { durationInFrames: Math.max(frames, 30) };
+        }}
         defaultProps={{
           scenes: demoScenes,
           style: { ...cleanDark, watermark: 'Promo Studio' },
@@ -65,6 +74,15 @@ export const RemotionRoot: React.FC = () => {
         fps={30}
         width={1080}
         height={1920}
+        calculateMetadata={({ props, defaultProps }) => {
+          const scenes = (props as any).scenes || (defaultProps as any).scenes || [];
+          const fpsVal = 30;
+          const frames = scenes.reduce(
+            (acc: number, s: any) => acc + Math.round((s.durationSeconds || 4) * fpsVal),
+            0
+          );
+          return { durationInFrames: Math.max(frames, 30) };
+        }}
         defaultProps={{
           scenes: demoScenes,
           style: cleanDark,
