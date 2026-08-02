@@ -62,31 +62,34 @@ export const ScreencastScene: React.FC<{
 
   const durationInFrames = Math.round(scene.durationSeconds * fps);
   const localFrame = frame;
-  const easing = getEasing('expoOut');
 
-  // ── Entrance: subtle scale from 1.05 to 1.0 ──
-  const enterProgress = easing(
-    interpolate(localFrame, [0, Math.round(fps * 0.6)], [0, 1], {
+  // ═══════════════════════════════════════════════════
+  // VALUES FROM pro-video-techniques.md SKILL
+  // ═══════════════════════════════════════════════════
+
+  // ── Entrance: easeOutExpo (skill §1.5: camera push-in) ──
+  const enterProgress = interpolate(localFrame, [0, Math.round(fps * 0.6)], [0, 1], {
+    extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
+    easing: getEasing('expoOut'),
+  });
+
+  // ── Exit: easeOutQuint (skill §1.5: Ken Burns zoom) ──
+  const exitProgress = isLast ? 0 : interpolate(
+    localFrame, [durationInFrames - Math.round(fps * 0.35), durationInFrames], [0, 1], {
       extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
-    })
+      easing: getEasing('easeOut'),
+    }
   );
 
-  // ── Exit: subtle scale up + fade ──
-  const exitProgress = isLast ? 0 : easing(
-    interpolate(localFrame, [durationInFrames - Math.round(fps * 0.35), durationInFrames], [0, 1], {
-      extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
-    })
-  );
-
-  // ── Camera moves: pan + zoom within the screenshot ──
+  // ── Camera: Ken Burns per skill §1.2 ──
+  // Standard push: 0.8 px/frame → endScale = 1 + (0.8 * duration) / 1920
   const focal = scene.focal || { x: 0.5, y: 0.5 };
-  
-  // Determine camera path based on preset or narrative role
   const role = scene.analysis?.narrative_role || '';
-  const preset = scene.zoomPreset || 'center';
 
-  // Zoom: start slightly zoomed in, pull back, then push into focal
-  const zoomBase = interpolate(localFrame, [0, durationInFrames], [1.15, 1.0], {
+  // Zoom: skill says 1.0→1.35 standard, 1.0→1.60 detail
+  const startScale = role === 'hook' ? 1.0 : 1.1;
+  const endScale = role === 'hook' ? 1.35 : 1.25;
+  const zoomBase = interpolate(localFrame, [0, durationInFrames], [startScale, endScale], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
 
@@ -112,8 +115,8 @@ export const ScreencastScene: React.FC<{
     type: tType, durationFrames: tDuration, easing: 'easeInOut',
   });
 
-  // ── Caption timing ──
-  const captionEnter = interpolate(localFrame, [Math.round(fps * 0.2), Math.round(fps * 0.6)], [0, 1], {
+  // ── Caption timing per skill §2.4 (text appears +0.3s after scene start) ──
+  const captionEnter = interpolate(localFrame, [Math.round(fps * 0.3), Math.round(fps * 0.7)], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
   const captionExit = interpolate(localFrame, [durationInFrames - Math.round(fps * 0.4), durationInFrames], [1, 0], {
@@ -308,15 +311,16 @@ export const ScreencastScene: React.FC<{
             {/* Caption */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25em' }}>
               {scene.caption.split(/\s+/).map((word, i) => {
-                const ws = wordStagger(localFrame, Math.round(fps * 0.06), fps, i, { stagger: 1, easing: 'backOut' });
+                // Skill §4.3: 4-frame stagger, 12-frame per-word, base delay 8 frames
+                const ws = wordStagger(localFrame, 8, fps, i, { stagger: 4, easing: 'backOut' });
                 return (
                   <span key={i} style={{
                     color: captionColor,
                     fontSize: style.captionSize,
                     fontFamily: style.fontFamily,
-                    fontWeight: 800,
-                    letterSpacing: '-0.01em',
-                    textShadow: '0 2px 20px rgba(0,0,0,0.9)',
+                    fontWeight: 700,
+                    letterSpacing: '-0.02em',
+                    textShadow: '0 2px 12px rgba(0,0,0,0.6), 0 1px 2px rgba(0,0,0,0.8)',
                     opacity: ws.opacity,
                     transform: ws.transform,
                     display: 'inline-block',
