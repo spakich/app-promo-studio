@@ -86,10 +86,10 @@ export function transitionIn(
     }
 
     case 'fadeToBlack': {
-      // New scene fades in from black (old scene fades to black separately)
+      // Gentle dissolve, NOT a hard black drop
       return {
-        opacity: interpolate(t, [0, 0.5, 1], [0, 0, 1]),
-        transform: 'scale(1)',
+        opacity: interpolate(t, [0, 0.7], [1, 0.85]),
+        transform: 'scale(1.02)',
       };
     }
 
@@ -150,8 +150,8 @@ export function transitionOut(
 
     case 'fadeToBlack':
       return {
-        opacity: interpolate(t, [0, 0.5], [1, 0]),
-        transform: 'scale(1)',
+        opacity: interpolate(t, [0, 0.7], [1, 0.85]),
+        transform: 'scale(1.05)',
       };
 
     case 'blurDissolve':

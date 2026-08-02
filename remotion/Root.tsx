@@ -4,16 +4,15 @@ import { VerticalPromo } from './compositions/VerticalPromo';
 import { getTemplate } from './templates';
 
 /**
- * Remotion Root — registers all compositions for the Remotion Studio.
+ * Remotion Root — registers all compositions.
  *
- * The Studio (npm run remotion:dev) shows all compositions listed here.
- * Click a composition, hit play, and see the animation engine in action.
- *
- * Props are static here for preview. In production, the app passes
- * screenshots and template selection via inputProps.
+ * Props are passed via --props=file.json when rendering.
+ * calculateMetadata computes the total duration dynamically:
+ * intro (3s) + sum(scenes) + outro (4s)
  */
 
-// Demo data — real screenshots from the NGE Stock promo
+const cleanDark = getTemplate('clean-dark').style;
+
 const demoScenes = [
   {
     src: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1920&h=1080&fit=crop',
@@ -41,7 +40,18 @@ const demoScenes = [
   },
 ];
 
-const cleanDark = getTemplate('clean-dark').style;
+const FPS = 30;
+const INTRO_SEC = 3;
+const OUTRO_SEC = 4;
+
+function calcDuration(props: any, defaultProps: any): number {
+  const scenes = (props?.scenes) || (defaultProps?.scenes) || [];
+  const scenesFrames = scenes.reduce(
+    (acc: number, s: any) => acc + Math.round((s.durationSeconds || 4) * FPS),
+    0
+  );
+  return Math.max(scenesFrames + (INTRO_SEC + OUTRO_SEC) * FPS, 60);
+}
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -50,42 +60,34 @@ export const RemotionRoot: React.FC = () => {
         id="HorizontalPromo"
         component={HorizontalPromo}
         durationInFrames={150}
-        fps={30}
+        fps={FPS}
         width={1920}
         height={1080}
-        calculateMetadata={({ props, defaultProps }) => {
-          const scenes = (props as any).scenes || (defaultProps as any).scenes || [];
-          const fpsVal = 30;
-          const frames = scenes.reduce(
-            (acc: number, s: any) => acc + Math.round((s.durationSeconds || 4) * fpsVal),
-            0
-          );
-          return { durationInFrames: Math.max(frames, 30) };
-        }}
+        calculateMetadata={({ props }) => ({
+          durationInFrames: calcDuration(props, {}),
+        })}
         defaultProps={{
           scenes: demoScenes,
           style: { ...cleanDark, watermark: 'Promo Studio' },
+          appName: 'Promo Studio',
+          pitch: 'Transformez vos apps en vidéos',
         }}
       />
       <Composition
         id="VerticalPromo"
         component={VerticalPromo}
         durationInFrames={150}
-        fps={30}
+        fps={FPS}
         width={1080}
         height={1920}
-        calculateMetadata={({ props, defaultProps }) => {
-          const scenes = (props as any).scenes || (defaultProps as any).scenes || [];
-          const fpsVal = 30;
-          const frames = scenes.reduce(
-            (acc: number, s: any) => acc + Math.round((s.durationSeconds || 4) * fpsVal),
-            0
-          );
-          return { durationInFrames: Math.max(frames, 30) };
-        }}
+        calculateMetadata={({ props }) => ({
+          durationInFrames: calcDuration(props, {}),
+        })}
         defaultProps={{
           scenes: demoScenes,
           style: cleanDark,
+          appName: 'Promo Studio',
+          pitch: 'Transformez vos apps en vidéos',
         }}
       />
     </>

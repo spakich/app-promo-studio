@@ -2,17 +2,15 @@ import { AbsoluteFill, Img, useCurrentFrame, useVideoConfig, interpolate, static
 import { kenBurns, zoomPresets } from '../animations/zoom';
 import { transitionIn, transitionOut, transitionDurations, type TransitionType } from '../animations/transitions';
 import { fadeUp, wordStagger, blurIn } from '../animations/textEffects';
+import { getEasing } from '../animations/easings';
 
 export interface SceneData {
   src: string;
   caption?: string;
   subtitle?: string;
-  /** Key into zoomPresets: center, topRight, bottomLeft, panRight, panLeft, panDown, panUp, pullOut, static */
   zoomPreset?: string;
-  /** Transition to the NEXT scene */
   transitionOut?: TransitionType;
   durationSeconds: number;
-  /** Visual focal point detected by the capture bot (0-1 normalized) */
   focal?: { x: number; y: number };
 }
 
@@ -26,8 +24,11 @@ export interface SceneStyle {
 }
 
 /**
- * A single animated scene: screenshot with Ken Burns + caption with text effects.
- * This is the building block — compositions stitch these together.
+ * Professional scene with 3D perspective, device mockup, glow and
+ * cinematic camera moves. This is NOT a flat screenshot overlay.
+ *
+ * The screenshot sits in a tilted browser frame with perspective depth,
+ * a glow halo behind it, and the camera glides through 3D space.
  */
 export const AnimatedScene: React.FC<{
   scene: SceneData;
@@ -38,12 +39,27 @@ export const AnimatedScene: React.FC<{
   isLast: boolean;
 }> = ({ scene, sceneIndex, startFrame, style, isLast }) => {
   const frame = useCurrentFrame();
-  const { fps, durationInFrames: compDuration } = useVideoConfig();
+  const { fps } = useVideoConfig();
 
   const durationInFrames = Math.round(scene.durationSeconds * fps);
   const localFrame = frame - startFrame;
+  const progress = localFrame / durationInFrames; // 0 → 1
 
-  // Ken Burns — the detected focal point becomes the camera's target
+  // ── 3D perspective camera — aggressive, dynamic ────────
+  // The scene enters from depth, pushes FORWARD past the viewer
+  const easing = getEasing('expoOut');
+  const enterProgress = easing(interpolate(localFrame, [0, Math.round(fps * 0.6)], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }));
+  const exitProgress = isLast ? 0 : easing(interpolate(localFrame, [durationInFrames - Math.round(fps * 0.4), durationInFrames], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }));
+
+  // Stronger Z push: start far, push in CLOSE
+  const z = interpolate(enterProgress, [0, 1], [400, -50]) + interpolate(exitProgress, [0, 1], [0, 100]);
+  // More dramatic tilt that settles
+  const rotX = interpolate(enterProgress, [0, 1], [25, 5]) + interpolate(exitProgress, [0, 1], [0, -5]);
+  const rotY = interpolate(enterProgress, [0, 1], [-15, 0]) + interpolate(exitProgress, [0, 1], [0, 8]);
+  const translateX = interpolate(enterProgress, [0, 1], [60, 0]);
+  const translateY = interpolate(enterProgress, [0, 1], [30, 0]);
+
+  // ── Ken Burns on the screenshot itself ─────────────────
   const presetName = scene.zoomPreset || 'center';
   const preset = zoomPresets[presetName] || zoomPresets.center;
   const config = scene.focal
@@ -51,7 +67,7 @@ export const AnimatedScene: React.FC<{
     : preset.config;
   const kb = kenBurns(localFrame, fps, durationInFrames, config);
 
-  // Transition (fade to next scene unless last)
+  // ── Opacity transitions ────────────────────────────────
   const tType = scene.transitionOut || 'crossDissolve';
   const tDuration = isLast ? 0 : transitionDurations.normal;
   const outState = transitionOut(localFrame, durationInFrames, {
@@ -60,46 +76,142 @@ export const AnimatedScene: React.FC<{
     easing: 'easeInOut',
   });
 
+  // ── Accent glow that breathes behind the device ────────
+  const glowScale = interpolate(
+    Math.sin(localFrame / (fps * 2)) * 0.5 + 0.5,
+    [0, 1],
+    [0.9, 1.15]
+  );
+  const glowOpacity = interpolate(enterProgress, [0, 1], [0, 0.5]) * (1 - exitProgress * 0.5);
+
+  // ── Device frame dimensions ────────────────────────────
+  const deviceWidth = 1440;
+  const deviceHeight = 810;
+  const radius = 14;
+  const titleBarHeight = 36;
+
   return (
     <AbsoluteFill style={{ backgroundColor: style.bgColor }}>
-      {/* Image with Ken Burns */}
-      <AbsoluteFill style={{ overflow: 'hidden', ...outState }}>
-        <Img
-          src={scene.src.startsWith('http') ? scene.src : staticFile(scene.src)}
+      {/* ── Ambient glow background ─────────────────────── */}
+      <AbsoluteFill style={{ opacity: glowOpacity * (outState.opacity ?? 1) }}>
+        <div
           style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            transform: kb.transform,
-            transformOrigin: kb.origin,
+            position: 'absolute',
+            width: '60%',
+            height: '60%',
+            left: '20%',
+            top: '20%',
+            background: `radial-gradient(ellipse at center, ${style.accentColor}55 0%, transparent 70%)`,
+            transform: `scale(${glowScale})`,
+            filter: 'blur(60px)',
           }}
         />
-        {/* Bottom gradient for caption legibility */}
-        {scene.caption && (
-          <AbsoluteFill
-            style={{
-              background:
-                'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.3) 30%, transparent 50%)',
-            }}
-          />
-        )}
       </AbsoluteFill>
 
-      {/* Caption with word stagger */}
+      {/* ── 3D Scene container ──────────────────────────── */}
+      <AbsoluteFill
+        style={{
+          perspective: 1400,
+          opacity: (enterProgress * (1 - exitProgress * 0.3)) * (outState.opacity ?? 1),
+        }}
+      >
+        <div
+          style={{
+            position: 'absolute',
+            left: '50%',
+            top: '42%',
+            width: deviceWidth,
+            height: deviceHeight,
+            marginLeft: -deviceWidth / 2,
+            marginTop: -deviceHeight / 2,
+            transformStyle: 'preserve-3d',
+            transform: `translate3d(${translateX}px, ${translateY}px, ${z}px) rotateX(${rotX}deg) rotateY(${rotY}deg)`,
+            // Shadow under the device
+            boxShadow: `0 60px 120px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08)`,
+            borderRadius: radius,
+            overflow: 'hidden',
+          }}
+        >
+          {/* Browser title bar */}
+          <div
+            style={{
+              height: titleBarHeight,
+              background: 'rgba(20,20,25,0.95)',
+              display: 'flex',
+              alignItems: 'center',
+              paddingLeft: 16,
+              gap: 8,
+            }}
+          >
+            <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#ff5f57' }} />
+            <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#febc2e' }} />
+            <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#28c840' }} />
+            <div
+              style={{
+                marginLeft: 24,
+                padding: '4px 60px',
+                background: 'rgba(255,255,255,0.05)',
+                borderRadius: 6,
+                fontSize: 11,
+                color: 'rgba(255,255,255,0.3)',
+                fontFamily: 'monospace',
+              }}
+            >
+              ●●●
+            </div>
+          </div>
+
+          {/* Screenshot with Ken Burns */}
+          <div
+            style={{
+              width: deviceWidth,
+              height: deviceHeight - titleBarHeight,
+              overflow: 'hidden',
+              position: 'relative',
+            }}
+          >
+            <Img
+              src={scene.src.startsWith('http') ? scene.src : staticFile(scene.src)}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                transform: kb.transform,
+                transformOrigin: kb.origin,
+              }}
+            />
+          </div>
+        </div>
+      </AbsoluteFill>
+
+      {/* ── Caption — professional bottom-third ─────────── */}
       {scene.caption && (
         <AbsoluteFill
           style={{
             justifyContent: 'flex-end',
             alignItems: 'center',
-            paddingBottom: 80,
+            paddingBottom: 60,
+            opacity: interpolate(localFrame, [Math.round(fps * 0.5), Math.round(fps * 1.2)], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) *
+              interpolate(localFrame, [durationInFrames - Math.round(fps * 0.5), durationInFrames], [1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }),
             ...outState,
           }}
         >
-          <div style={{ textAlign: 'center', maxWidth: '80%' }}>
-            {/* Caption — word by word stagger */}
+          {/* Accent line */}
+          <div
+            style={{
+              width: 60,
+              height: 4,
+              borderRadius: 2,
+              background: style.accentColor,
+              marginBottom: 24,
+              boxShadow: `0 0 20px ${style.accentColor}88`,
+              transform: `scaleX(${interpolate(localFrame, [Math.round(fps * 0.5), Math.round(fps * 0.9)], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })})`,
+            }}
+          />
+          <div style={{ textAlign: 'center', maxWidth: '75%' }}>
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0.3em' }}>
               {scene.caption.split(/\s+/).map((word, i) => {
-                const ws = wordStagger(localFrame, Math.round(fps * 0.2), fps, i, { stagger: 3, easing: 'backOut' });
+                const ws = wordStagger(localFrame, Math.round(fps * 0.15), fps, i, { stagger: 3, easing: 'backOut' });
                 return (
                   <span
                     key={i}
@@ -107,8 +219,9 @@ export const AnimatedScene: React.FC<{
                       color: 'white',
                       fontSize: style.captionSize,
                       fontFamily: style.fontFamily,
-                      fontWeight: 700,
-                      textShadow: '0 2px 20px rgba(0,0,0,0.8)',
+                      fontWeight: 800,
+                      letterSpacing: '0',
+                      textShadow: '0 4px 30px rgba(0,0,0,0.9)',
                       opacity: ws.opacity,
                       transform: ws.transform,
                       display: 'inline-block',
@@ -119,17 +232,15 @@ export const AnimatedScene: React.FC<{
                 );
               })}
             </div>
-
-            {/* Subtitle — fade up with delay */}
             {scene.subtitle && (
               <div
                 style={{
-                  ...blurIn(localFrame, Math.round(fps * 0.5), fps, { delay: 6 }),
-                  color: style.accentColor,
+                  ...fadeUp(localFrame, Math.round(fps * 0.4), fps, { delay: 8 }),
+                  color: 'rgba(255,255,255,0.75)',
                   fontSize: style.subtitleSize,
                   fontFamily: style.fontFamily,
-                  fontWeight: 500,
-                  marginTop: 16,
+                  fontWeight: 400,
+                  marginTop: 14,
                   textShadow: '0 2px 10px rgba(0,0,0,0.6)',
                 }}
               >
@@ -140,22 +251,22 @@ export const AnimatedScene: React.FC<{
         </AbsoluteFill>
       )}
 
-      {/* Watermark / app name */}
-      {style.watermark && sceneIndex === 0 && (
-        <AbsoluteFill style={{ justifyContent: 'flex-start', alignItems: 'flex-end', flexDirection: 'row', padding: 40 }}>
-          <div
-            style={{
-              ...fadeUp(localFrame, 0, fps, { delay: 4 }),
-              color: 'rgba(255,255,255,0.5)',
-              fontSize: 24,
-              fontFamily: style.fontFamily,
-              fontWeight: 600,
-            }}
-          >
-            {style.watermark}
-          </div>
-        </AbsoluteFill>
-      )}
+      {/* ── Floating accent orb (depth layer) ───────────── */}
+      <AbsoluteFill style={{ opacity: glowOpacity * (outState.opacity ?? 1), pointerEvents: 'none' }}>
+        <div
+          style={{
+            position: 'absolute',
+            right: '8%',
+            top: '15%',
+            width: 200,
+            height: 200,
+            borderRadius: '50%',
+            background: `radial-gradient(circle, ${style.accentColor}33 0%, transparent 70%)`,
+            filter: 'blur(30px)',
+            transform: `translateY(${interpolate(progress, [0, 1], [20, -20])}px)`,
+          }}
+        />
+      </AbsoluteFill>
     </AbsoluteFill>
   );
 };

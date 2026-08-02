@@ -60,8 +60,24 @@ const readme = await gh(`/repos/${owner}/${repo}/readme`).then((r) =>
   Buffer.from(r.content, 'base64').toString('utf-8')
 ).catch(() => '');
 
-// ── 2. Dynamic capture manifest ──
+// ── 2. Dynamic capture manifest — filter out empty/inert screens ──
 const manifest = JSON.parse(await readFile(path.join(capturesDir, 'capture_manifest.json'), 'utf-8'));
+
+// Reject captures that show empty states — a promo video must show the app IN ACTION
+const EMPTY_SIGNALS = ['ajoutez', 'vide', 'commencer', 'aucune donnée', 'no data', 'empty', 'placeholder', 'rien à afficher', 'aucun projet', 'aucun résultat'];
+const goodCaptures = manifest.captures.filter((c) => {
+  const texts = (c.texts || []).join(' ').toLowerCase();
+  return !EMPTY_SIGNALS.some((sig) => texts.includes(sig));
+});
+// If we filtered too aggressively, keep at least the 3 richest captures
+const usableCaptures = goodCaptures.length >= 2
+  ? goodCaptures
+  : manifest.captures
+      .map((c) => ({ c, richness: (c.texts?.length || 0) + (c.focal ? 2 : 0) }))
+      .sort((a, b) => b.richness - a.richness)
+      .slice(0, 4)
+      .map((x) => x.c);
+manifest.captures = usableCaptures;
 
 // ── 3. Build the LLM prompt ──
 const screensDesc = manifest.captures
@@ -156,6 +172,7 @@ for (const s of storyboard.scenes) {
 const output = {
   appName: meta.name,
   pitch: storyboard.pitch,
+  ctaText: 'Essayer gratuitement',
   generatedAt: new Date().toISOString(),
   style: {
     bgColor: cssVars['--bg-base'] || '#0a0a0b',
@@ -163,8 +180,8 @@ const output = {
     fontFamily: manifest.liveDesign?.fonts?.[0]
       ? `${manifest.liveDesign.fonts[0]}, system-ui, sans-serif`
       : 'Inter, system-ui, sans-serif',
-    captionSize: 64,
-    subtitleSize: 32,
+    captionSize: 56,
+    subtitleSize: 28,
   },
   scenes,
   llmRaw: raw,
