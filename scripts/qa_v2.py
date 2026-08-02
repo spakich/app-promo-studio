@@ -95,20 +95,19 @@ def analyze_frame_with_gemini(frame_path, timestamp, storyboard, api_key):
     
     ts = f'{timestamp:.1f}'
     prompt = (
-        "Tu es un expert en motion design professionnel. "
-        f"Analyse cette frame d'une vidéo promo à t={ts}s.\n\n"
-        "Contexte:\n"
+        "You are a professional motion design expert. "
+        f"Analyze this frame from a promo video at t={ts}s.\n\n"
+        "Context:\n"
         f"- App: {storyboard.get('appName', 'Unknown')}\n"
-        f"- Scène attendue: {current_scene_idx + 1} (rôle: {expected_role})\n"
-        f'- Caption attendue: "{expected_caption}"\n\n'
-        "Évalue UNIQUEMENT ces 4 critères (0-10 chaque):\n"
-        "1. LISIBILITÉ: Le texte overlay est-il net et lisible? Contraste suffisant?\n"
-        "2. EXPOSITION: La frame est-elle bien exposée? Trop sombre/clair?\n"
-        "3. DYNAMISME: Y a-t-il du mouvement visible? Un effet de profondeur? Un curseur?\n"
-        "4. PROFESSIONNALISME: Cette frame pourrait-elle être dans une vidéo Apple/Linear/Stripe?\n\n"
-        'Réponds en JSON EXACT:\n'
-        '{"l": <0-10>, "e": <0-10>, "d": <0-10>, "p": <0-10>, "note": "<observation en 15 mots max>"}\n\n'
-        "Sois BRUTAL. Une frame sombre = 0 en exposition. Un texte illisible = 0 en lisibilité."
+        f"- Scene: {current_scene_idx + 1} (role: {expected_role})\n"
+        f'- Caption: "{expected_caption}"\n\n'
+        "Rate these 4 criteria (0-10 each):\n"
+        "1. READABILITY: Is the text overlay crisp and legible?\n"
+        "2. EXPOSURE: Is the frame well exposed?\n"
+        "3. DYNAMISM: Is there visible movement or depth?\n"
+        "4. PROFESSIONALISM: Could this be in an Apple/Linear video?\n\n"
+        "Respond in this EXACT JSON format only:\n"
+        '{"readability": 7, "exposure": 8, "dynamism": 6, "professionalism": 7, "note": "brief"}'
     )
 
     import urllib.request
@@ -118,7 +117,7 @@ def analyze_frame_with_gemini(frame_path, timestamp, storyboard, api_key):
             {'text': prompt},
             {'inline_data': {'mime_type': 'image/jpeg', 'data': img_data}}
         ]}],
-        'generationConfig': {'temperature': 0.3, 'maxOutputTokens': 200},
+        'generationConfig': {'temperature': 0.3, 'maxOutputTokens': 500},
     }).encode()
     
     req = urllib.request.Request(url, data=body, headers={'Content-Type': 'application/json'})
@@ -135,10 +134,10 @@ def analyze_frame_with_gemini(frame_path, timestamp, storyboard, api_key):
         note_match = re.search(r'note["\']?\s*[:=]\s*["\']?(.+?)(?:["\']|$)', text, re.IGNORECASE)
         note = note_match.group(1).strip() if note_match else ''
         return {
-            'l': min(10, max(0, extract_val('l', text))),
-            'e': min(10, max(0, extract_val('e', text))),
-            'd': min(10, max(0, extract_val('d', text))),
-            'p': min(10, max(0, extract_val('p', text))),
+            'l': min(10, max(0, extract_val('readability', text))),
+            'e': min(10, max(0, extract_val('exposure', text))),
+            'd': min(10, max(0, extract_val('dynamism', text))),
+            'p': min(10, max(0, extract_val('professionalism', text))),
             'note': note[:60],
         }
     except Exception as e:
