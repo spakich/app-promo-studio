@@ -1,5 +1,5 @@
 import { AbsoluteFill, Sequence } from 'remotion';
-import { AnimatedScene, type SceneData, type SceneStyle } from '../components/AnimatedScene';
+import { ScreencastScene, type SceneData, type SceneStyle } from '../components/ScreencastScene';
 import { IntroScene, OutroScene } from '../components/IntroScene';
 
 export type { SceneData, SceneStyle };
@@ -12,12 +12,12 @@ export interface PromoProps {
   ctaText?: string;
 }
 
-const INTRO_SECONDS = 3;
-const OUTRO_SECONDS = 4;
+const INTRO_SECONDS = 2.5;
+const OUTRO_SECONDS = 3.5;
 
 /**
  * HorizontalPromo — 16:9 (1920×1080)
- * Full structure: Intro → Animated scenes → Outro CTA
+ * Screencast style: screenshot fills screen, cursor moves, pans/zooms
  */
 export const HorizontalPromo: React.FC<PromoProps> = ({
   scenes,
@@ -50,7 +50,7 @@ export const HorizontalPromo: React.FC<PromoProps> = ({
 
         return (
           <Sequence key={i} from={startFrame} durationInFrames={durationInFrames}>
-            <AnimatedScene
+            <ScreencastScene
               scene={scene}
               sceneIndex={i}
               totalScenes={scenes.length}
