@@ -105,7 +105,7 @@ export const IntroScene: React.FC<{
           fontSize: 56,
           fontWeight: 800,
           fontFamily: style.fontFamily,
-          letterSpacing: '-0.03em',
+          letterSpacing: '0',
           transform: `translateY(${nameY}px)`,
           opacity: nameOpacity,
           textShadow: '0 4px 30px rgba(0,0,0,0.5)',
@@ -118,7 +118,7 @@ export const IntroScene: React.FC<{
       {pitch && (
         <div
           style={{
-            color: 'rgba(255,255,255,0.5)',
+            color: '#E2E8F0',
             fontSize: 24,
             fontFamily: style.fontFamily,
             fontWeight: 400,
@@ -224,7 +224,7 @@ export const OutroScene: React.FC<{
           fontSize: 72,
           fontWeight: 900,
           fontFamily: style.fontFamily,
-          letterSpacing: '-0.03em',
+          letterSpacing: '0',
           transform: `scale(${titleScale})`,
           textShadow: `0 4px 40px rgba(0,0,0,0.6)`,
           zIndex: 2,
@@ -237,7 +237,7 @@ export const OutroScene: React.FC<{
       {pitch && (
         <div
           style={{
-            color: 'rgba(255,255,255,0.6)',
+            color: '#E2E8F0',
             fontSize: 28,
             fontFamily: style.fontFamily,
             fontWeight: 400,
