@@ -127,26 +127,30 @@ export const PreviewCanvas: React.FC = () => {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: 4,
       }}>
         <div style={{
           display: 'flex',
-          gap: 8,
+          gap: 6,
           alignItems: 'center',
           color: '#94a3b8',
-          fontSize: 12,
+          fontSize: 11,
           fontWeight: 600,
+          flexWrap: 'wrap',
         }}>
           <span style={{
-            padding: '2px 8px',
+            padding: '2px 6px',
             background: '#1e293b',
-            borderRadius: 6,
+            borderRadius: 4,
             color: '#3b82f6',
+            fontSize: 10,
           }}>{config.render.format}</span>
-          <span>{config.render.mode}</span>
-          <span style={{ opacity: 0.5 }}>·</span>
-          <span>{durationInSeconds.toFixed(1)}s</span>
-          <span style={{ opacity: 0.5 }}>·</span>
-          <span>{storyboard.scenes.length} scènes</span>
+          <span style={{ fontSize: 10 }}>{config.render.mode}</span>
+          <span style={{ opacity: 0.4 }}>·</span>
+          <span style={{ fontSize: 10 }}>{durationInSeconds.toFixed(1)}s</span>
+          <span style={{ opacity: 0.4 }}>·</span>
+          <span style={{ fontSize: 10 }}>{storyboard.scenes.length} scènes</span>
         </div>
         <div style={{ display: 'flex', gap: 6 }}>
           <button
@@ -176,7 +180,8 @@ export const PreviewCanvas: React.FC = () => {
         overflow: 'hidden',
         boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
         aspectRatio: `${dims.width} / ${dims.height}`,
-        maxHeight: 'calc(100vh - 280px)',
+        maxHeight: '70vh',
+        maxWidth: '100%',
       }}>
         <Player
           component={PreviewComposition}
