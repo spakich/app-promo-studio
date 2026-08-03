@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,sans-serif;}
+body{width:1920px;height:1080px;background:#F0F2F5;overflow:hidden;display:flex;}
+.sidebar{width:240px;background:#002060;height:100%;flex-shrink:0;display:flex;flex-direction:column;}
+.sidebar-logo{padding:20px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,0.1);}
+.nav-item{padding:11px 20px;color:rgba(255,255,255,0.7);font-size:13px;display:flex;align-items:center;gap:10px;}
+.nav-item.active{background:rgba(246,190,0,0.15);color:#F6BE00;border-left:3px solid #F6BE00;}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+/* KPI bar */
+.kpi-bar{display:flex;gap:12px;padding:14px 20px;background:#002060;flex-shrink:0;}
+.kpi-card{flex:1;background:rgba(255,255,255,0.10);border-radius:8px;padding:10px 14px;min-width:120px;}
+.kpi-label{font-size:11px;color:rgba(255,255,255,0.65);font-weight:600;text-transform:uppercase;letter-spacing:0.4px;}
+.kpi-value{font-size:22px;font-weight:800;color:#fff;margin-top:2px;}
+.kpi-sub{font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;}
+.kpi-sub.green{color:#70AD47;}
+.kpi-sub.red{color:#FF6B6B;}
+/* Content */
+.content{flex:1;padding:20px;overflow:hidden;}
+.content-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.content-title{font-size:20px;font-weight:700;color:#002060;}
+/* Chantier cards */
+.chantier-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.chantier-card{background:#fff;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,0.05);overflow:hidden;}
+.chantier-header{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #f0f0f0;}
+.chantier-name{font-size:14px;font-weight:700;color:#002060;}
+.chantier-region{font-size:11px;color:#888;background:#EEF4FB;padding:2px 8px;border-radius:8px;}
+.chantier-body{padding:12px 16px;}
+.chantier-stat{display:flex;justify-content:space-between;padding:4px 0;font-size:13px;}
+.chantier-stat-label{color:#666;}
+.chantier-stat-value{font-weight:700;color:#333;}
+.marge-positive{color:#70AD47;font-weight:800;}
+.marge-negative{color:#C00000;font-weight:800;}
+/* Progress bar */
+.progress-bar{height:6px;background:#EBECF0;border-radius:3px;margin-top:8px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:3px;}
+</style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div style="width:40px;height:40px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#002060;font-size:16px;">NGE</div>
+    <span style="color:#fff;font-weight:700;font-size:14px;">NGE INFRANET</span>
+  </div>
+  <div class="nav-item">📊 Tableau de bord</div>
+  <div class="nav-item">📦 Stock actuel</div>
+  <div class="nav-item">🧵 Tourets</div>
+  <div class="nav-item">📋 Mouvements</div>
+  <div class="nav-item active">🏗️ Chantiers</div>
+  <div class="nav-item">👷 Sous-traitants</div>
+  <div class="nav-item">📦 Préparation commandes</div>
+  <div class="nav-item">🤖 Réception IA</div>
+  <div class="nav-item active">💰 Chiffrage</div>
+  <div class="nav-item">📈 Rapports</div>
+</div>
+<div class="main">
+  <div class="kpi-bar">
+    <div class="kpi-card"><div class="kpi-label">CA Total chantiers</div><div class="kpi-value">2,47 M€</div><div class="kpi-sub green">+18% vs N-1</div></div>
+    <div class="kpi-card"><div class="kpi-label">Coût matériaux</div><div class="kpi-value">1,82 M€</div><div class="kpi-sub">73,7% du CA</div></div>
+    <div class="kpi-card"><div class="kpi-label">Marge brute</div><div class="kpi-value">652 k€</div><div class="kpi-sub green">26,4%</div></div>
+    <div class="kpi-card"><div class="kpi-label">Chantiers actifs</div><div class="kpi-value">24</div><div class="kpi-sub">6 en clôture</div></div>
+    <div class="kpi-card"><div class="kpi-label">Sous-chantiers</div><div class="kpi-value">102</div><div class="kpi-sub">RIP34: 102 lots</div></div>
+    <div class="kpi-card"><div class="kpi-label">Budget restant</div><div class="kpi-value">385 k€</div><div class="kpi-sub green">Engagé: 84%</div></div>
+  </div>
+  <div class="content">
+    <div class="content-header">
+      <div class="content-title">Coûts par chantier — Vue hiérarchique</div>
+    </div>
+    <div class="chantier-grid">
+      <div class="chantier-card">
+        <div class="chantier-header">
+          <span class="chantier-name">RIP34 — Réseau Iliad (Métropole)</span>
+          <span class="chantier-region">OCCITANIE</span>
+        </div>
+        <div class="chantier-body">
+          <div class="chantier-stat"><span class="chantier-stat-label">Budget initial</span><span class="chantier-stat-value">890 000 €</span></div>
+          <div class="chantier-stat"><span class="chantier-stat-label">Coût réalisé (102 lots)</span><span class="chantier-stat-value">712 400 €</span></div>
+          <div class="chantier-stat"><span class="chantier-stat-label">Reste à dépenser</span><span class="chantier-stat-value">177 600 €</span></div>
+          <div class="chantier-stat"><span class="chantier-stat-label">Marge brute</span><span class="marge-positive">+186 500 € (20,9%)</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:80%;background:#002060;"></div></div>
+          <div style="font-size:11px;color:#888;margin-top:4px;">80% du budget consommé</div>
+        </div>
+      </div>
+      <div class="chantier-card">
+        <div class="chantier-header">
+          <span class="chantier-name">EUROFIBER — Déploiement 31</span>
+          <span class="chantier-region">HAUTE-GARONNE</span>
+        </div>
+        <div class="chantier-body">
+          <div class="chantier-stat"><span class="chantier-stat-label">Budget initial</span><span class="chantier-stat-value">520 000 €</span></div>
+          <div class="chantier-stat"><span class="chantier-stat-label">Coût réalisé</span><span class="chantier-stat-value">385 800 €</span></div>
+          <div class="chantier-stat"><span class="chantier-stat-label">Reste à dépenser</span><span class="chantier-stat-value">134 200 €</span></div>
+          <div class="chantier-stat"><span class="chantier-stat-label">Marge brute</span><span class="marge-positive">+134 200 € (25,8%)</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:74%;background:#002060;"></div></div>
+          <div style="font-size:11px;color:#888;margin-top:4px;">74% du budget consommé</div>
+        </div>
+      </div>
+      <div class="chantier-card">
+        <div class="chantier-header">
+          <span class="chantier-name">Toulouse Métropole — ZTD</span>
+          <span class="chantier-region">OCCITANIE</span>
+        </div>
+        <div class="chantier-body">
+          <div class="chantier-stat"><span class="chantier-stat-label">Budget initial</span><span class="chantier-stat-value">650 000 €</span></div>
+          <div class="chantier-stat"><span class="chantier-stat-label">Coût réalisé</span><span class="chantier-stat-value">551 300 €</span></div>
+          <div class="chantier-stat"><span class="chantier-stat-label">Reste à dépenser</span><span class="chantier-stat-value">98 700 €</span></div>
+          <div class="chantier-stat"><span class="chantier-stat-label">Marge brute</span><span class="marge-positive">+98 700 € (15,2%)</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:85%;background:#F57C00;"></div></div>
+          <div style="font-size:11px;color:#888;margin-top:4px;">85% du budget consommé</div>
+        </div>
+      </div>
+      <div class="chantier-card">
+        <div class="chantier-header">
+          <span class="chantier-name">KOSC — RIP47 Lot B</span>
+          <span class="chantier-region">LOT-ET-GARONNE</span>
+        </div>
+        <div class="chantier-body">
+          <div class="chantier-stat"><span class="chantier-stat-label">Budget initial</span><span class="chantier-stat-value">410 000 €</span></div>
+          <div class="chantier-stat"><span class="chantier-stat-label">Coût réalisé</span><span class="chantier-stat-value">342 700 €</span></div>
+          <div class="chantier-stat"><span class="chantier-stat-label">Reste à dépenser</span><span class="chantier-stat-value">67 300 €</span></div>
+          <div class="chantier-stat"><span class="chantier-stat-label">Marge brute</span><span class="marge-positive">+67 300 € (16,4%)</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:84%;background:#F57C00;"></div></div>
+          <div style="font-size:11px;color:#888;margin-top:4px;">84% du budget consommé</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

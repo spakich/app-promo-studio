@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,sans-serif;}
+body{width:1920px;height:1080px;background:#002060;overflow:hidden;display:flex;}
+.sidebar{width:240px;background:rgba(0,0,0,0.25);height:100%;flex-shrink:0;display:flex;flex-direction:column;}
+.sidebar-logo{padding:20px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,0.1);}
+.nav-item{padding:11px 20px;color:rgba(255,255,255,0.6);font-size:13px;display:flex;align-items:center;gap:10px;}
+.nav-item.active{background:rgba(246,190,0,0.15);color:#F6BE00;border-left:3px solid #F6BE00;}
+.kanban-area{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.kanban-header{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.05);}
+.kanban-title{color:#fff;font-size:18px;font-weight:700;}
+.kanban-body{display:flex;gap:12px;padding:16px;flex:1;overflow:hidden;}
+.kanban-col{flex:1;background:#EBECF0;border-radius:8px;display:flex;flex-direction:column;overflow:hidden;}
+.col-header{padding:10px 12px;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:700;color:#172B4D;border-bottom:2px solid;}
+.col-header.a-preparer{border-color:#FF7F27;}
+.col-header.en-cours{border-color:#0052CC;}
+.col-header.livree{border-color:#006644;}
+.col-header.annulee{border-color:#666;}
+.col-count{background:rgba(0,0,0,0.08);padding:1px 8px;border-radius:10px;font-size:11px;font-weight:600;}
+.col-body{padding:8px;overflow-y:auto;flex:1;}
+.kanban-card{background:#fff;border-radius:6px;padding:12px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,0.1);border-left:3px solid #002060;}
+.card-numero{font-family:monospace;font-size:11px;color:#002060;font-weight:700;margin-bottom:4px;}
+.card-chantier{font-size:13px;font-weight:600;color:#172B4D;margin-bottom:6px;}
+.card-meta{display:flex;gap:8px;font-size:11px;color:#6B778C;align-items:center;margin-bottom:8px;}
+.card-st{display:inline-block;background:#DEEBFF;color:#0052CC;padding:2px 8px;border-radius:8px;font-size:10px;font-weight:600;}
+.card-items{font-size:12px;color:#505F79;margin-top:6px;padding-top:6px;border-top:1px solid #EBECF0;}
+.card-item{display:flex;justify-content:space-between;padding:2px 0;}
+.card-qty{font-weight:700;color:#002060;}
+.card-footer{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:11px;color:#6B778C;}
+.card-date{display:flex;align-items:center;gap:4px;}
+.badge-rdy{background:#E3FCEF;color:#006644;padding:2px 6px;border-radius:6px;font-size:10px;font-weight:700;}
+.badge-part{background:#FFF4E5;color:#974F0C;padding:2px 6px;border-radius:6px;font-size:10px;font-weight:700;}
+</style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div style="width:40px;height:40px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#002060;font-size:16px;">NGE</div>
+    <span style="color:#fff;font-weight:700;font-size:14px;">NGE INFRANET</span>
+  </div>
+  <div class="nav-item">📊 Tableau de bord</div>
+  <div class="nav-item">📦 Stock actuel</div>
+  <div class="nav-item">🧵 Tourets</div>
+  <div class="nav-item">📋 Mouvements</div>
+  <div class="nav-item">🏗️ Chantiers</div>
+  <div class="nav-item">👷 Sous-traitants</div>
+  <div class="nav-item active">📦 Préparation commandes</div>
+  <div class="nav-item">🤖 Réception IA</div>
+  <div class="nav-item">💰 Chiffrage</div>
+  <div class="nav-item">📈 Rapports</div>
+</div>
+<div class="kanban-area">
+  <div class="kanban-header">
+    <div class="kanban-title">Préparation des commandes</div>
+    <div style="display:flex;gap:10px;">
+      <span style="color:rgba(255,255,255,0.4);font-size:13px;">12 commandes · 4 à préparer · 3 en cours · 5 livrées</span>
+    </div>
+  </div>
+  <div class="kanban-body">
+    <!-- Colonne À PRÉPARER -->
+    <div class="kanban-col">
+      <div class="col-header a-preparer"><span>🟠 À PRÉPARER</span><span class="col-count">4</span></div>
+      <div class="col-body">
+        <div class="kanban-card">
+          <div class="card-numero">CMD-2026-0142</div>
+          <div class="card-chantier">RIP34 / MEZE_S14</div>
+          <div class="card-meta"><span class="card-st">FAST LIFE</span><span>RDV: 05/08</span></div>
+          <div class="card-items">
+            <div class="card-item"><span>Câble FO 48F</span><span class="card-qty">2 400m</span></div>
+            <div class="card-item"><span>BPI 12 pts</span><span class="card-qty">12 u.</span></div>
+            <div class="card-item"><span>Raccordement U-one</span><span class="card-qty">100 u.</span></div>
+          </div>
+          <div class="card-footer"><span class="card-date">📅 03/08</span><span class="badge-rdy">PRÊT</span></div>
+        </div>
+        <div class="kanban-card" style="border-left-color:#FF7F27;">
+          <div class="card-numero">CMD-2026-0143</div>
+          <div class="card-chantier">EUROFIBER / BLN</div>
+          <div class="card-meta"><span class="card-st">ESCOM</span><span>RDV: 06/08</span></div>
+          <div class="card-items">
+            <div class="card-item"><span>Câble FO 96F</span><span class="card-qty">1 500m</span></div>
+            <div class="card-item"><span>Gaine HDPE 40</span><span class="card-qty">5 u.</span></div>
+          </div>
+          <div class="card-footer"><span class="card-date">📅 03/08</span><span class="badge-part">PARTIEL</span></div>
+        </div>
+        <div class="kanban-card">
+          <div class="card-numero">CMD-2026-0144</div>
+          <div class="card-chantier">KOSC / RIP47</div>
+          <div class="card-meta"><span class="card-st">Naoufel</span></div>
+          <div class="card-items">
+            <div class="card-item"><span>Câble FO 24F</span><span class="card-qty">870m</span></div>
+          </div>
+          <div class="card-footer"><span class="card-date">📅 02/08</span></div>
+        </div>
+      </div>
+    </div>
+    <!-- Colonne EN COURS -->
+    <div class="kanban-col">
+      <div class="col-header en-cours"><span>🔵 EN COURS</span><span class="col-count">3</span></div>
+      <div class="col-body">
+        <div class="kanban-card" style="border-left-color:#0052CC;">
+          <div class="card-numero">CMD-2026-0138</div>
+          <div class="card-chantier">Toulouse Métropole / ZTD-12</div>
+          <div class="card-meta"><span class="card-st">FAST LIFE</span><span>RDV: 04/08</span></div>
+          <div class="card-items">
+            <div class="card-item"><span>Câble FO 48F</span><span class="card-qty">1 200m</span></div>
+            <div class="card-item"><span>BPI 12 pts</span><span class="card-qty">20 u.</span></div>
+          </div>
+          <div class="card-footer"><span class="card-date">📦 En préparation</span></div>
+        </div>
+        <div class="kanban-card" style="border-left-color:#0052CC;">
+          <div class="card-numero">CMD-2026-0139</div>
+          <div class="card-chantier">BOUYGUES / Axiat</div>
+          <div class="card-meta"><span class="card-st">AB VIDEOCOM</span></div>
+          <div class="card-items">
+            <div class="card-item"><span>Câble FO 72F</span><span class="card-qty">1 680m</span></div>
+          </div>
+          <div class="card-footer"><span class="card-date">📦 En préparation</span></div>
+        </div>
+      </div>
+    </div>
+    <!-- Colonne LIVRÉE -->
+    <div class="kanban-col">
+      <div class="col-header livree"><span>🟢 LIVRÉE</span><span class="col-count">5</span></div>
+      <div class="col-body">
+        <div class="kanban-card" style="border-left-color:#006644;opacity:0.75;">
+          <div class="card-numero">CMD-2026-0135</div>
+          <div class="card-chantier">RIP34 / STPT_S02</div>
+          <div class="card-meta"><span class="card-st">AB VIDEOCOM</span></div>
+          <div class="card-items">
+            <div class="card-item"><span>Câble FO 48F</span><span class="card-qty">2 400m</span></div>
+            <div class="card-item"><span>Raccordement</span><span class="card-qty">200 u.</span></div>
+          </div>
+          <div class="card-footer"><span class="card-date">✅ 01/08</span></div>
+        </div>
+        <div class="kanban-card" style="border-left-color:#006644;opacity:0.75;">
+          <div class="card-numero">CMD-2026-0136</div>
+          <div class="card-chantier">EUROFIBER / BLN-7</div>
+          <div class="card-meta"><span class="card-st">ESCOM</span></div>
+          <div class="card-items">
+            <div class="card-item"><span>Câble FO 96F</span><span class="card-qty">3 000m</span></div>
+          </div>
+          <div class="card-footer"><span class="card-date">✅ 31/07</span></div>
+        </div>
+        <div class="kanban-card" style="border-left-color:#006644;opacity:0.75;">
+          <div class="card-numero">CMD-2026-0137</div>
+          <div class="card-chantier">KOSC / RIP47 Lot B</div>
+          <div class="card-meta"><span class="card-st">Naoufel</span></div>
+          <div class="card-items">
+            <div class="card-item"><span>BPI 12 pts</span><span class="card-qty">30 u.</span></div>
+            <div class="card-item"><span>Gaine HDPE</span><span class="card-qty">8 u.</span></div>
+          </div>
+          <div class="card-footer"><span class="card-date">✅ 30/07</span></div>
+        </div>
+      </div>
+    </div>
+    <!-- Colonne ANNULÉE -->
+    <div class="kanban-col">
+      <div class="col-header annulee"><span>⚪ ANNULÉE</span><span class="col-count">0</span></div>
+      <div class="col-body" style="display:flex;align-items:center;justify-content:center;">
+        <span style="color:#999;font-size:13px;">Aucune commande annulée</span>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

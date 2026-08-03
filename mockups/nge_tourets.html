@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,sans-serif;}
+body{width:1920px;height:1080px;background:#F4F6FA;overflow:hidden;display:flex;}
+.sidebar{width:240px;background:#002060;height:100%;flex-shrink:0;display:flex;flex-direction:column;}
+.sidebar-logo{padding:20px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,0.1);}
+.nav-item{padding:11px 20px;color:rgba(255,255,255,0.7);font-size:13px;display:flex;align-items:center;gap:10px;}
+.nav-item.active{background:rgba(246,190,0,0.15);color:#F6BE00;border-left:3px solid #F6BE00;}
+.main{flex:1;padding:24px;overflow:hidden;}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+.title{font-size:24px;font-weight:700;color:#002060;}
+.subtitle{font-size:13px;color:#666;margin-top:4px;}
+.btn{background:#002060;color:#fff;border:2px solid #F6BE00;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:600;}
+/* Stats bar */
+.stats-bar{display:flex;gap:12px;margin-bottom:20px;}
+.stat{background:#fff;border-radius:10px;padding:12px 18px;box-shadow:0 2px 6px rgba(0,0,0,0.05);flex:1;}
+.stat-label{font-size:11px;color:#888;text-transform:uppercase;font-weight:600;}
+.stat-value{font-size:22px;font-weight:800;color:#002060;margin-top:3px;}
+.stat-sub{font-size:11px;color:#70AD47;margin-top:2px;}
+.stat-sub.red{color:#C00000;}
+/* Table */
+.table{background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);overflow:hidden;}
+.table-head{display:grid;grid-template-columns:120px 1fr 100px 90px 100px 110px 120px 130px 80px;gap:0;padding:12px 16px;background:#002060;color:#fff;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;}
+.table-row{display:grid;grid-template-columns:120px 1fr 100px 90px 100px 110px 120px 130px 80px;gap:0;padding:14px 16px;border-bottom:1px solid #f0f0f0;font-size:13px;color:#333;align-items:center;}
+.table-row:nth-child(even){background:#FAFBFC;}
+.id-touret{font-family:monospace;font-weight:700;color:#002060;}
+.ref{font-weight:600;}
+.statut-badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;}
+.statut-ENTREPOT{background:#E3FCEF;color:#006644;}
+.statut-DEPLOYE{background:#DEEBFF;color:#0052CC;}
+.statut-AFFECTE{background:#FFF4E5;color:#974F0C;}
+.statut-POSE{background:#F0F0F0;color:#666;}
+.pill{display:inline-block;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:600;background:#EEF4FB;color:#002060;}
+</style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div style="width:40px;height:40px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#002060;font-size:16px;">NGE</div>
+    <span style="color:#fff;font-weight:700;font-size:14px;">NGE INFRANET</span>
+  </div>
+  <div class="nav-item">📊 Tableau de bord</div>
+  <div class="nav-item">📦 Stock actuel</div>
+  <div class="nav-item active">🧵 Tourets</div>
+  <div class="nav-item">📋 Mouvements</div>
+  <div class="nav-item">🏗️ Chantiers</div>
+  <div class="nav-item">👷 Sous-traitants</div>
+  <div class="nav-item">📦 Préparation commandes</div>
+  <div class="nav-item">🤖 Réception IA</div>
+  <div class="nav-item">💰 Chiffrage</div>
+  <div class="nav-item">📈 Rapports</div>
+</div>
+<div class="main">
+  <div class="header">
+    <div><div class="title">Tourets — Câbles Fibre Optique</div><div class="subtitle">434 tourets suivis · 102 sous-chantiers RIP34</div></div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn" style="background:#fff;color:#002060;">📷 QR Code</button>
+      <button class="btn">+ Nouveau touret</button>
+    </div>
+  </div>
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-label">Tourets total</div><div class="stat-value">434</div><div class="stat-sub">Tous statuts</div></div>
+    <div class="stat"><div class="stat-label">À l'entrepôt</div><div class="stat-value">187</div><div class="stat-sub">Disponibles</div></div>
+    <div class="stat"><div class="stat-label">Déployés</div><div class="stat-value">142</div><div class="stat-sub">Sur chantier</div></div>
+    <div class="stat"><div class="stat-label">Affectés ST</div><div class="stat-value">78</div><div class="stat-sub">Chez sous-traitants</div></div>
+    <div class="stat"><div class="stat-label">Métrage total</div><div class="stat-value">412 km</div><div class="stat-sub">387 km posés</div></div>
+    <div class="stat"><div class="stat-label">Valeur</div><div class="stat-value">612 k€</div><div class="stat-sub red">2 anomalies</div></div>
+  </div>
+  <div class="table">
+    <div class="table-head">
+      <div>ID Touret</div><div>Référence / Désignation</div><div>Fibres</div><div>Long. init.</div><div>Long. rest.</div><div>Prix €/m</div><div>Chantier</div><div>Statut</div><div>ST</div>
+    </div>
+    <div class="table-row">
+      <div class="id-touret">T-2026-082</div><div class="ref">Câble FO FOA-DI-48F</div><div>48</div><div>2 400m</div><div><span style="color:#006644;font-weight:700;">2 400m</span></div><div>0,85 €</div><div>—</div><div><span class="statut-badge statut-ENTREPOT">Entrepôt</span></div><div>—</div>
+    </div>
+    <div class="table-row">
+      <div class="id-touret">T-2026-077</div><div class="ref">Câble FO FOA-DI-24F</div><div>24</div><div>2 000m</div><div><span style="color:#C00000;font-weight:700;">-124m ⚠</span></div><div>0,72 €</div><div>RIP34 / MEZE_S14</div><div><span class="statut-badge statut-DEPLOYE">Déployé</span></div><div>FAST LIFE</div>
+    </div>
+    <div class="table-row">
+      <div class="id-touret">T-2026-061</div><div class="ref">Câble FO FOA-DI-96F</div><div>96</div><div>3 000m</div><div><span style="color:#0052CC;font-weight:700;">1 580m</span></div><div>1,12 €</div><div>EUROFIBER / BLN</div><div><span class="statut-badge statut-AFFECTE">Affecté</span></div><div>ESCOM</div>
+    </div>
+    <div class="table-row">
+      <div class="id-touret">T-2026-055</div><div class="ref">Câble FO FOA-DI-48F</div><div>48</div><div>2 400m</div><div><span style="color:#666;font-weight:700;">0m</span></div><div>0,85 €</div><div>RIP34 / STPT_S02</div><div><span class="statut-badge statut-POSE">Posé</span></div><div>AB VIDEOCOM</div>
+    </div>
+    <div class="table-row">
+      <div class="id-touret">T-2026-048</div><div class="ref">Câble FO FOA-DI-24F</div><div>24</div><div>2 000m</div><div><span style="color:#0052CC;font-weight:700;">870m</span></div><div>0,72 €</div><div>KOSC / RIP47</div><div><span class="statut-badge statut-DEPLOYE">Déployé</span></div><div>Naoufel</div>
+    </div>
+    <div class="table-row">
+      <div class="id-touret">T-2026-041</div><div class="ref">Câble FO FOA-DI-72F</div><div>72</div><div>2 800m</div><div><span style="color:#006644;font-weight:700;">2 800m</span></div><div>0,98 €</div><div>—</div><div><span class="statut-badge statut-ENTREPOT">Entrepôt</span></div><div>—</div>
+    </div>
+    <div class="table-row">
+      <div class="id-touret">T-2026-035</div><div class="ref">Câble FO FOA-DI-48F</div><div>48</div><div>2 400m</div><div><span style="color:#0052CC;font-weight:700;">1 120m</span></div><div>0,85 €</div><div>Toulouse Metropole</div><div><span class="statut-badge statut-AFFECTE">Affecté</span></div><div>FAST LIFE</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

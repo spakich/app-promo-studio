@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',system-ui,sans-serif; }
+body { width:1920px; height:1080px; background:#F4F6FA; overflow:hidden; display:flex; }
+
+/* Sidebar NGE */
+.sidebar { width:240px; background:#002060; height:100%; display:flex; flex-direction:column; flex-shrink:0; }
+.sidebar-logo { padding:20px 16px; display:flex; align-items:center; gap:12px; border-bottom:1px solid rgba(255,255,255,0.1); }
+.sidebar-logo img { width:40px; height:40px; background:#fff; border-radius:8px; }
+.sidebar-logo span { color:#fff; font-weight:700; font-size:14px; }
+.nav-item { padding:11px 20px; color:rgba(255,255,255,0.7); font-size:13px; display:flex; align-items:center; gap:10px; cursor:pointer; }
+.nav-item.active { background:rgba(246,190,0,0.15); color:#F6BE00; border-left:3px solid #F6BE00; }
+.nav-item:hover { color:#fff; }
+.nav-icon { width:18px; height:18px; display:inline-block; }
+
+/* Main content */
+.main { flex:1; padding:24px; overflow:hidden; }
+.page-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
+.page-title { font-size:24px; font-weight:700; color:#002060; }
+.page-subtitle { font-size:13px; color:#666; margin-top:4px; }
+.btn-primary { background:#002060; color:#fff; border:2px solid #F6BE00; border-radius:8px; padding:10px 20px; font-size:14px; font-weight:600; }
+
+/* KPI Cards */
+.kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+.kpi-card { background:#fff; border-radius:12px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+.kpi-label { font-size:11px; color:#888; text-transform:uppercase; letter-spacing:0.5px; font-weight:600; }
+.kpi-value { font-size:28px; font-weight:800; color:#002060; margin-top:6px; }
+.kpi-sub { font-size:12px; color:#70AD47; margin-top:4px; }
+.kpi-sub.red { color:#C00000; }
+.kpi-icon { width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:18px; margin-bottom:8px; }
+
+/* Engagement + Anomalies */
+.mid-grid { display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-bottom:24px; }
+.card { background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); overflow:hidden; }
+.card-header { padding:16px 20px; border-bottom:1px solid #f0f0f0; font-weight:600; color:#002060; font-size:15px; }
+.card-body { padding:8px 0; }
+
+.engagement-row { display:flex; align-items:center; gap:12px; padding:10px 20px; border-bottom:1px solid #f8f8f8; }
+.engagement-client { flex:1; font-size:13px; color:#333; font-weight:500; }
+.engagement-value { font-size:16px; font-weight:800; color:#002060; }
+.engagement-bar { width:80px; height:6px; background:#EBECF0; border-radius:3px; overflow:hidden; }
+.engagement-bar-fill { height:100%; background:#002060; border-radius:3px; }
+
+/* Alertes + Movements */
+.bottom-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.alert-row { display:flex; align-items:center; gap:12px; padding:10px 20px; border-bottom:1px solid #f8f8f8; }
+.alert-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.alert-text { flex:1; font-size:13px; color:#333; }
+.alert-value { font-size:13px; font-weight:700; color:#C00000; }
+
+.mvt-row { display:flex; align-items:center; gap:10px; padding:8px 20px; border-bottom:1px solid #f8f8f8; }
+.mvt-type { font-size:10px; font-weight:700; padding:2px 8px; border-radius:10px; }
+.mvt-type.RECEPTION { background:#E3FCEF; color:#006644; }
+.mvt-type.SORTIE { background:#DEEBFF; color:#0052CC; }
+.mvt-type.RETOUR { background:#FFF4E5; color:#974F0C; }
+.mvt-ref { font-size:12px; color:#002060; font-weight:600; min-width:200px; }
+.mvt-date { font-size:11px; color:#999; }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div style="width:40px;height:40px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#002060;font-size:16px;">NGE</div>
+    <span>NGE INFRANET</span>
+  </div>
+  <div class="nav-item active">
+    <span class="nav-icon">📊</span> Tableau de bord
+  </div>
+  <div class="nav-item"><span class="nav-icon">📦</span> Stock actuel</div>
+  <div class="nav-item"><span class="nav-icon">🧵</span> Tourets</div>
+  <div class="nav-item"><span class="nav-icon">📋</span> Mouvements</div>
+  <div class="nav-item"><span class="nav-icon">🏗️</span> Chantiers</div>
+  <div class="nav-item"><span class="nav-icon">👷</span> Sous-traitants</div>
+  <div class="nav-item"><span class="nav-icon">📦</span> Préparation commandes</div>
+  <div class="nav-item"><span class="nav-icon">🤖</span> Réception IA</div>
+  <div class="nav-item"><span class="nav-icon">💰</span> Chiffrage</div>
+  <div class="nav-item"><span class="nav-icon">📈</span> Rapports</div>
+  <div class="nav-item"><span class="nav-icon">⚠️</span> Alertes</div>
+</div>
+
+<div class="main">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Tableau de bord</div>
+      <div class="page-subtitle">samedi 2 août 2026</div>
+    </div>
+    <button class="btn-primary">+ Saisir un mouvement</button>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-icon" style="background:#EEF4FB;">💰</div>
+      <div class="kpi-label">Valeur du stock</div>
+      <div class="kpi-value">847 320 €</div>
+      <div class="kpi-sub">+12,3% vs mois dernier</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon" style="background:#E3FCEF;">📦</div>
+      <div class="kpi-label">Articles actifs</div>
+      <div class="kpi-value">1 247</div>
+      <div class="kpi-sub">347 références référencées</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon" style="background:#FFF4E5;">🔄</div>
+      <div class="kpi-label">Taux de rotation</div>
+      <div class="kpi-value">4,2×</div>
+      <div class="kpi-sub">Couverture 87 jours</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon" style="background:#FEF0F0;">⚠️</div>
+      <div class="kpi-label">Stock mort</div>
+      <div class="kpi-value">23 450 €</div>
+      <div class="kpi-sub red">2,8% du stock total</div>
+    </div>
+  </div>
+
+  <div class="mid-grid">
+    <div class="card">
+      <div class="card-header">Engagement par client</div>
+      <div class="card-body">
+        <div class="engagement-row">
+          <span class="engagement-client">RIP34 — Réseau Illiad</span>
+          <div class="engagement-bar"><div class="engagement-bar-fill" style="width:85%"></div></div>
+          <span class="engagement-value">186 500 €</span>
+        </div>
+        <div class="engagement-row">
+          <span class="engagement-client">EUROFIBER — Déploiement 31</span>
+          <div class="engagement-bar"><div class="engagement-bar-fill" style="width:62%"></div></div>
+          <span class="engagement-value">134 200 €</span>
+        </div>
+        <div class="engagement-row">
+          <span class="engagement-client">Toulouse Métropole — ZTD</span>
+          <div class="engagement-bar"><div class="engagement-bar-fill" style="width:45%"></div></div>
+          <span class="engagement-value">98 700 €</span>
+        </div>
+        <div class="engagement-row">
+          <span class="engagement-client">KOSC — RIP47 Lot B</span>
+          <div class="engagement-bar"><div class="engagement-bar-fill" style="width:32%"></div></div>
+          <span class="engagement-value">67 300 €</span>
+        </div>
+        <div class="engagement-row">
+          <span class="engagement-client">BOUYGUES — Axiat</span>
+          <div class="engagement-bar"><div class="engagement-bar-fill" style="width:18%"></div></div>
+          <span class="engagement-value">42 100 €</span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">🚨 Anomalies & alertes</div>
+      <div class="card-body">
+        <div class="alert-row">
+          <div class="alert-dot" style="background:#C00000;"></div>
+          <span class="alert-text">Câble FO 24F — Rupture de stock</span>
+          <span class="alert-value">-3 u.</span>
+        </div>
+        <div class="alert-row">
+          <div class="alert-dot" style="background:#C00000;"></div>
+          <span class="alert-text">Touret T-2026-077 — Stock négatif</span>
+          <span class="alert-value">-124m</span>
+        </div>
+        <div class="alert-row">
+          <div class="alert-dot" style="background:#F57C00;"></div>
+          <span class="alert-text">BPE 12 pts — Sous le seuil</span>
+          <span class="alert-value">2 / 5</span>
+        </div>
+        <div class="alert-row">
+          <div class="alert-dot" style="background:#F57C00;"></div>
+          <span class="alert-text">Raccordement FO — Sous le seuil</span>
+          <span class="alert-value">8 / 20</span>
+        </div>
+        <div class="alert-row">
+          <div class="alert-dot" style="background:#F57C00;"></div>
+          <span class="alert-text">Gaine HDPE 40mm — Sous le seuil</span>
+          <span class="alert-value">15 / 50</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-grid">
+    <div class="card">
+      <div class="card-header">Derniers mouvements</div>
+      <div class="card-body">
+        <div class="mvt-row">
+          <span class="mvt-type RECEPTION">RÉCEPTION</span>
+          <span class="mvt-ref">Touret FO 48F — T-2026-082</span>
+          <span style="font-size:13px;font-weight:700;color:#006644;">+2 400m</span>
+          <span class="mvt-date">Il y a 12 min</span>
+        </div>
+        <div class="mvt-row">
+          <span class="mvt-type SORTIE">SORTIE</span>
+          <span class="mvt-ref">Câble FO 24F → RIP34 / MEZE_S14</span>
+          <span style="font-size:13px;font-weight:700;color:#0052CC;">-850m</span>
+          <span class="mvt-date">Il y a 34 min</span>
+        </div>
+        <div class="mvt-row">
+          <span class="mvt-type RETOUR">RETOUR_ST</span>
+          <span class="mvt-ref">Touret T-2026-061 ← FAST LIFE</span>
+          <span style="font-size:13px;font-weight:700;color:#974F0C;">+420m</span>
+          <span class="mvt-date">Il y a 1h</span>
+        </div>
+        <div class="mvt-row">
+          <span class="mvt-type RECEPTION">RÉCEPTION</span>
+          <span class="mvt-ref">BPE 12 pts — Bon livraison BL-7821</span>
+          <span style="font-size:13px;font-weight:700;color:#006644;">+50 u.</span>
+          <span class="mvt-date">Il y a 2h</span>
+        </div>
+        <div class="mvt-row">
+          <span class="mvt-type SORTIE">SORTIE</span>
+          <span class="mvt-ref">Raccordement FO → EUROFIBER / BLN</span>
+          <span style="font-size:13px;font-weight:700;color:#0052CC;">-120 u.</span>
+          <span class="mvt-date">Il y a 3h</span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">Activité du stock</div>
+      <div class="card-body">
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 20px;border-bottom:1px solid #f8f8f8;">
+          <span style="font-size:16px;width:24px;text-align:center;">📦</span>
+          <span style="flex:1;font-size:13px;color:#444;">Mouvements ce mois</span>
+          <span style="font-size:18px;font-weight:800;color:#002060;">342</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 20px;border-bottom:1px solid #f8f8f8;">
+          <span style="font-size:16px;width:24px;text-align:center;">🔴</span>
+          <span style="flex:1;font-size:13px;color:#444;">Articles en rupture</span>
+          <span style="font-size:18px;font-weight:800;color:#C00000;">2</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 20px;border-bottom:1px solid #f8f8f8;">
+          <span style="font-size:16px;width:24px;text-align:center;">⚠️</span>
+          <span style="flex:1;font-size:13px;color:#444;">Articles sous seuil</span>
+          <span style="font-size:18px;font-weight:800;color:#F57C00;">3</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 20px;border-bottom:1px solid #f8f8f8;">
+          <span style="font-size:16px;width:24px;text-align:center;">✅</span>
+          <span style="flex:1;font-size:13px;color:#444;">Articles actifs</span>
+          <span style="font-size:18px;font-weight:800;color:#70AD47;">1 247</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

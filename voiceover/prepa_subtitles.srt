@@ -1,0 +1,60 @@
+1
+00:00:00,100 --> 00:00:02,036
+Préparation de commandes.
+
+2
+00:00:01,986 --> 00:00:04,062
+Le flux Kanban qui change tout.
+
+3
+00:00:04,062 --> 00:00:06,316
+Chaque commande suit son parcours.
+
+4
+00:00:06,316 --> 00:00:09,531
+À préparer, en cours, prêt, livré.
+
+5
+00:00:09,531 --> 00:00:11,674
+Vous voyez tout en un coup d'œil.
+
+6
+00:00:11,674 --> 00:00:15,055
+Quel sous-traitant, quel chantier, quels materiels.
+
+7
+00:00:15,055 --> 00:00:17,611
+Glissez une carte, l'état change.
+
+8
+00:00:17,611 --> 00:00:19,430
+Le stock est reservé.
+
+9
+00:00:19,430 --> 00:00:21,875
+Plus d'oubli, plus de confusion.
+
+10
+00:00:21,875 --> 00:00:25,468
+Chaque mètre de câble tracé, chaque livraison confirmée.
+
+11
+00:00:25,468 --> 00:00:29,765
+Vos équipes terrain savent exactement quoi prendre, quand, et pour quel chantier.
+
+12
+00:00:29,765 --> 00:00:31,707
+Préparation de commandes.
+
+13
+00:00:31,707 --> 00:00:32,991
+Simple.
+
+14
+00:00:32,991 --> 00:00:34,397
+Rapide.
+
+15
+00:00:34,397 --> 00:00:35,680
+Fiable.
+

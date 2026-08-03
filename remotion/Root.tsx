@@ -3,91 +3,117 @@ import { HorizontalPromo } from './compositions/HorizontalPromo';
 import { VerticalPromo } from './compositions/VerticalPromo';
 import { getTemplate } from './templates';
 
-/**
- * Remotion Root — registers all compositions.
- *
- * Props are passed via --props=file.json when rendering.
- * calculateMetadata computes the total duration dynamically:
- * intro (3s) + sum(scenes) + outro (4s)
- */
-
-const cleanDark = getTemplate('clean-dark').style;
-
-const demoScenes = [
+// ─── NGE STOCK — Vidéo avec VRAIES captures d'écran ───────────────────────────
+const ngeScenes = [
   {
-    src: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1920&h=1080&fit=crop',
-    caption: 'Votre stock ment.',
-    subtitle: 'Mais pas pour longtemps.',
+    src: 'output/nge/real_dashboard.png',
+    caption: 'Pilotez votre stock en temps réel',
+    subtitle: '2,1 M€ de stock · 707 articles · 67 alertes',
     zoomPreset: 'center',
     transitionOut: 'blurDissolve' as const,
-    durationSeconds: 4,
+    durationSeconds: 4.5,
   },
   {
-    src: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1920&h=1080&fit=crop',
-    caption: 'Chaque carte réserve votre matière.',
-    subtitle: 'Le stock que vous voyez est réel.',
-    zoomPreset: 'topRight',
+    src: 'output/nge/real_tourets.png',
+    caption: '503 tourets suivis au mètre près',
+    subtitle: 'QR codes, pose, affectation sous-traitants',
+    zoomPreset: 'panRight',
     transitionOut: 'zoomThrough' as const,
     durationSeconds: 4,
   },
   {
-    src: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1920&h=1080&fit=crop',
-    caption: 'Importez votre Excel.',
-    subtitle: "C'est tout.",
-    zoomPreset: 'panRight',
+    src: 'output/nge/real_reception_ia.png',
+    caption: 'Réception par Intelligence Artificielle',
+    subtitle: "Photographiez — Claude Sonnet extrait tout",
+    zoomPreset: 'topRight',
+    transitionOut: 'blurDissolve' as const,
+    durationSeconds: 4,
+  },
+  {
+    src: 'output/nge/nge_kanban.png',
+    caption: 'Préparez vos commandes en Kanban',
+    subtitle: 'Glissez-déposez, du devis à la livraison',
+    zoomPreset: 'panLeft',
+    transitionOut: 'zoomThrough' as const,
+    durationSeconds: 4,
+  },
+  {
+    src: 'output/nge/nge_chantiers.png',
+    caption: 'Coûts chantiers en temps réel',
+    subtitle: 'Marges, budgets, sous-chantiers hiérarchisés',
+    zoomPreset: 'center',
     transitionOut: 'fadeToBlack' as const,
     durationSeconds: 4,
   },
 ];
 
-const FPS = 30;
-const INTRO_SEC = 3;
-const OUTRO_SEC = 4;
+const ngeStyle = {
+  bgColor: '#002060',
+  accentColor: '#F6BE00',
+  fontFamily: 'Segoe UI, system-ui, sans-serif',
+  captionSize: 64,
+  subtitleSize: 32,
+};
 
-function calcDuration(props: any, defaultProps: any): number {
-  const scenes = (props?.scenes) || (defaultProps?.scenes) || [];
-  const scenesFrames = scenes.reduce(
-    (acc: number, s: any) => acc + Math.round((s.durationSeconds || 4) * FPS),
-    0
-  );
-  return Math.max(scenesFrames + (INTRO_SEC + OUTRO_SEC) * FPS, 60);
-}
+// ─── App Promo Studio démo ───────────────────────────────────────────────────
+const appScenes = [
+  {
+    src: 'output/sc_dashboard.png',
+    caption: 'Votre studio de création vidéo',
+    subtitle: 'De screenshots à vidéo pro en 2 minutes',
+    zoomPreset: 'center',
+    transitionOut: 'blurDissolve' as const,
+    durationSeconds: 4,
+  },
+  {
+    src: 'output/sc_editor.png',
+    caption: 'Éditeur 3 panneaux',
+    subtitle: 'Format, screenshots, templates',
+    zoomPreset: 'topRight',
+    transitionOut: 'zoomThrough' as const,
+    durationSeconds: 4,
+  },
+];
+
+const cleanDark = getTemplate('clean-dark').style;
 
 export const RemotionRoot: React.FC = () => {
   return (
     <>
       <Composition
-        id="HorizontalPromo"
+        id="NGEStockPromo"
         component={HorizontalPromo}
-        durationInFrames={150}
-        fps={FPS}
+        durationInFrames={390}
+        fps={30}
         width={1920}
         height={1080}
-        calculateMetadata={({ props }) => ({
-          durationInFrames: calcDuration(props, {}),
-        })}
         defaultProps={{
-          scenes: demoScenes,
-          style: { ...cleanDark, watermark: 'Promo Studio' },
-          appName: 'Promo Studio',
-          pitch: 'Transformez vos apps en vidéos',
+          scenes: ngeScenes,
+          style: { ...ngeStyle, watermark: 'NGE Energies Solutions' },
+        }}
+      />
+      <Composition
+        id="AppPromoStudio"
+        component={HorizontalPromo}
+        durationInFrames={150}
+        fps={30}
+        width={1920}
+        height={1080}
+        defaultProps={{
+          scenes: appScenes,
+          style: { ...cleanDark, watermark: 'App Promo Studio' },
         }}
       />
       <Composition
         id="VerticalPromo"
         component={VerticalPromo}
         durationInFrames={150}
-        fps={FPS}
+        fps={30}
         width={1080}
         height={1920}
-        calculateMetadata={({ props }) => ({
-          durationInFrames: calcDuration(props, {}),
-        })}
         defaultProps={{
-          scenes: demoScenes,
+          scenes: appScenes,
           style: cleanDark,
-          appName: 'Promo Studio',
-          pitch: 'Transformez vos apps en vidéos',
         }}
       />
     </>

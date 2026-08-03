@@ -1,0 +1,56 @@
+1
+00:00:00,100 --> 00:00:02,148
+NGE Stock Manager.
+
+2
+00:00:02,098 --> 00:00:05,602
+La plateforme tout-en-un pour piloter votre stock fibre optique.
+
+3
+00:00:05,602 --> 00:00:08,861
+Plus de deux millions d'euros de matériel surveillés en temps réel.
+
+4
+00:00:08,861 --> 00:00:13,002
+707 articles actifs, 503 tourets suivis au mètre près.
+
+5
+00:00:13,002 --> 00:00:16,439
+Réceptionnez votre matériel par intelligence artificielle.
+
+6
+00:00:16,439 --> 00:00:19,977
+Photographiez un bon de livraison, Claude Sonnet extrait tout.
+
+7
+00:00:19,977 --> 00:00:21,529
+Automatiquement.
+
+8
+00:00:21,529 --> 00:00:23,604
+Préparez vos commandes en Kanban.
+
+9
+00:00:23,604 --> 00:00:26,227
+Glissez, assignez, livrez.
+
+10
+00:00:26,227 --> 00:00:29,732
+Suivez vos chantiers et sous-traitants avec les coûts et marges en direct.
+
+11
+00:00:29,732 --> 00:00:32,154
+Rapports Excel complets en un clic.
+
+12
+00:00:32,154 --> 00:00:34,207
+NGE Stock Manager.
+
+13
+00:00:34,207 --> 00:00:36,975
+Le contrôle total, du quai au chantier.
+
+14
+00:00:36,975 --> 00:00:40,535
+Et maintenant, place à la préparation de commandes en détail.
+
