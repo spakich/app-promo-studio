@@ -135,7 +135,37 @@ app.post('/api/storyboard', (req, res) => {
 });
 
 // ═══════════════════════════════════════════════════
-// POST /api/voice — generate voice-over
+// POST /api/voice/generate — generate TTS from raw text
+// ═══════════════════════════════════════════════════
+app.post('/api/voice/generate', (req, res) => {
+  const { text, voice = 'fr-FR-HenriNeural', rate = '+0%' } = req.body;
+  
+  if (!text || !text.trim()) {
+    return res.json({ success: false, error: 'No text provided' });
+  }
+
+  const outputPath = `output/voice_custom_${Date.now()}.mp3`;
+  
+  // Write text to temp file
+  const scriptPath = `/tmp/voice_script_${Date.now()}.txt`;
+  writeFileSync(scriptPath, text);
+  
+  const result = runScript(
+    `edge-tts --voice "${voice}" --rate="${rate}" --file "${scriptPath}" --write-media "${outputPath}"`,
+    ROOT,
+    30000
+  );
+
+  const fullPath = join(ROOT, outputPath);
+  if (existsSync(fullPath)) {
+    return res.json({ success: true, audioPath: outputPath });
+  }
+  
+  return res.json({ success: false, error: result.output?.substring(0, 500) });
+});
+
+// ═══════════════════════════════════════════════════
+// POST /api/voice — generate voice-over from storyboard
 // ═══════════════════════════════════════════════════
 app.post('/api/voice', (req, res) => {
   const { storyboardPath = 'output/storyboard_optimized.json', language = 'fr', voiceFile } = req.body;

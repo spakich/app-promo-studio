@@ -13,6 +13,7 @@ import {
   renderVideo, runQA, runPipeline, getJobStatus, downloadUrl,
   type AnalysisResult, type CaptureManifest, type Storyboard, type QAResult,
 } from '../lib/pipeline';
+import { VoiceEditor } from '../components/VoiceEditor';
 
 type StepId = 'source' | 'analysis' | 'capture' | 'storyboard' | 'voice' | 'music' | 'render' | 'qa' | 'export';
 
@@ -290,29 +291,14 @@ export function MagicPage() {
               </div>
             )}
 
-            {/* VOICE */}
+            {/* VOICE — now with full text editor */}
             {step === 'voice' && (
               <div className="animate-fade-in">
                 <h1 className="text-2xl font-bold text-[var(--text-primary)] tracking-tight mb-2">Voix-off</h1>
-                <p className="text-[var(--text-secondary)] mb-8">Narration générée à partir des captions, ou ta propre voix.</p>
-                <div className="grid grid-cols-3 gap-3 mb-6">
-                  <OptionCard active={voiceMode === 'tts'} onClick={() => setVoiceMode('tts')} icon={Wand2} title="Voix IA" desc="Générée auto" badge="Recommandé" />
-                  <OptionCard active={voiceMode === 'custom'} onClick={() => setVoiceMode('custom')} icon={Mic} title="Ma voix" desc="Importer audio" />
-                  <OptionCard active={voiceMode === 'none'} onClick={() => setVoiceMode('none')} icon={Volume2} title="Sans voix" desc="Musique seule" />
-                </div>
-                {voiceMode === 'tts' && (
-                  <Card className="p-6 space-y-4">
-                    <div><label className="text-xs font-bold uppercase text-[var(--text-tertiary)] mb-2 block">Langue</label>
-                      <div className="flex gap-2"><OptionPill active={voiceLang === 'fr'} onClick={() => setVoiceLang('fr')}>🇫🇷 Français</OptionPill><OptionPill active={voiceLang === 'en'} onClick={() => setVoiceLang('en')}>🇬🇧 English</OptionPill></div>
-                    </div>
-                    <div><label className="text-xs font-bold uppercase text-[var(--text-tertiary)] mb-2 block">Voix</label>
-                      <div className="flex gap-2"><OptionPill active={voiceGender === 'male'} onClick={() => setVoiceGender('male')}>Homme</OptionPill><OptionPill active={voiceGender === 'female'} onClick={() => setVoiceGender('female')}>Femme</OptionPill></div>
-                    </div>
-                  </Card>
-                )}
-                {voiceMode === 'custom' && (
-                  <Card className="p-6"><div className="border-2 border-dashed border-[var(--border-subtle)] rounded-xl p-8 text-center"><Mic size={32} className="text-[var(--text-tertiary)] mx-auto mb-3" /><p className="text-sm">Glisse ton fichier audio (MP3, WAV, M4A)</p></div></Card>
-                )}
+                <p className="text-[var(--text-secondary)] mb-6">Écris ton script, choisis ta voix, écoute le résultat.</p>
+                <VoiceEditor
+                  initialScript={analysis?.narrative ? `${analysis.narrative.pitch}. ${analysis.narrative.scenes.map(s => s.caption).join('. ')}.` : ''}
+                />
               </div>
             )}
 

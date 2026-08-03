@@ -15,6 +15,7 @@ export interface SceneData {
   kenBurnsIntensity?: 'low' | 'high';
   entrance?: string;
   parallax?: boolean;
+  url?: string;
   analysis?: { interest_score?: number; camera_move?: string; narrative_role?: string };
 }
 
@@ -31,24 +32,12 @@ export interface SceneStyle {
   bgGradient?: string;
 }
 
-/**
- * ═══════════════════════════════════════════════════════════════
- * SCREENCAST SCENE — professional screen recording style
- * ═══════════════════════════════════════════════════════════════
- * 
- * Like ScreenStudio / Arcade / Loom:
- * - Screenshot fills 90%+ of the frame
- * - Browser chrome bar (clean, minimal)
- * - Smooth pan/zoom INTO the content
- * - Cursor that moves to features and clicks
- * - Caption as gradient bottom bar
- * - Subtle click ripple on focal points
- * - Background accent glow that's barely visible
- * 
- * NO heavy particles, NO extreme 3D tilt, NO bloom
- * The CONTENT is the star, not the effects.
- * ═══════════════════════════════════════════════════════════════
- */
+// ═══════════════════════════════════════════════════════════════
+// SCREENCAST SCENE — professional screen recording style
+// Like ScreenStudio: content fills screen, minimal chrome,
+// smooth camera, real URL, readable captions.
+// ═══════════════════════════════════════════════════════════════
+
 export const ScreencastScene: React.FC<{
   scene: SceneData;
   sceneIndex: number;
@@ -62,18 +51,16 @@ export const ScreencastScene: React.FC<{
 
   const durationInFrames = Math.round(scene.durationSeconds * fps);
   const localFrame = frame;
+  const accent = style.accentColor || '#338AFF';
+  const captionColor = style.captionColor || '#FFFFFF';
 
-  // ═══════════════════════════════════════════════════
-  // VALUES FROM pro-video-techniques.md SKILL
-  // ═══════════════════════════════════════════════════
-
-  // ── Entrance: easeOutExpo (skill §1.5: camera push-in) ──
+  // ── Entrance ──
   const enterProgress = interpolate(localFrame, [0, Math.round(fps * 0.6)], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
     easing: getEasing('expoOut'),
   });
 
-  // ── Exit: easeOutQuint (skill §1.5: Ken Burns zoom) ──
+  // ── Exit ──
   const exitProgress = isLast ? 0 : interpolate(
     localFrame, [durationInFrames - Math.round(fps * 0.35), durationInFrames], [0, 1], {
       extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
@@ -81,32 +68,22 @@ export const ScreencastScene: React.FC<{
     }
   );
 
-  // ── Camera: Ken Burns per skill §1.2 ──
-  // Standard push: 0.8 px/frame → endScale = 1 + (0.8 * duration) / 1920
+  // ── Camera Ken Burns ──
   const focal = scene.focal || { x: 0.5, y: 0.5 };
   const role = scene.analysis?.narrative_role || '';
-
-  // Zoom: skill says 1.0→1.35 standard, 1.0→1.60 detail
-  const startScale = role === 'hook' ? 1.0 : 1.1;
-  const endScale = role === 'hook' ? 1.35 : 1.25;
+  const startScale = role === 'hook' ? 1.0 : 1.08;
+  const endScale = role === 'hook' ? 1.25 : 1.20;
   const zoomBase = interpolate(localFrame, [0, durationInFrames], [startScale, endScale], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
-
-  // Pan offset based on focal point (subtle, 20px max)
-  const panEnter = interpolate(enterProgress, [0, 1], [30, 0]);
-  const panX = (focal.x - 0.5) * -40 + panEnter;
-  const panY = (focal.y - 0.5) * -25;
-
-  // Exit pan/zoom
-  const exitZoom = interpolate(exitProgress, [0, 1], [1.0, 1.1]);
-  const exitPanX = interpolate(exitProgress, [0, 1], [0, (focal.x - 0.5) * -60]);
-  const finalZoom = zoomBase * exitZoom;
+  const panEnter = interpolate(enterProgress, [0, 1], [20, 0]);
+  const panX = (focal.x - 0.5) * -30 + panEnter;
+  const exitPanX = interpolate(exitProgress, [0, 1], [0, (focal.x - 0.5) * -40]);
   const finalPanX = panX + exitPanX;
-
-  // Entrance scale
-  const entranceScale = interpolate(enterProgress, [0, 1], [1.05, 1.0]);
-  const totalScale = finalZoom * entranceScale;
+  const panY = (focal.y - 0.5) * -20;
+  const exitZoom = interpolate(exitProgress, [0, 1], [1.0, 1.08]);
+  const entranceScale = interpolate(enterProgress, [0, 1], [1.03, 1.0]);
+  const totalScale = zoomBase * exitZoom * entranceScale;
 
   // ── Transition out ──
   const tType = scene.transitionOut || 'slidePush';
@@ -115,7 +92,7 @@ export const ScreencastScene: React.FC<{
     type: tType, durationFrames: tDuration, easing: 'easeInOut',
   });
 
-  // ── Caption timing per skill §2.4 (text appears +0.3s after scene start) ──
+  // ── Caption timing ──
   const captionEnter = interpolate(localFrame, [Math.round(fps * 0.3), Math.round(fps * 0.7)], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
@@ -124,63 +101,61 @@ export const ScreencastScene: React.FC<{
   });
   const captionOpacity = captionEnter * captionExit;
 
-  // ── Cursor animation ──
-  // Cursor starts off-center, moves to focal point at 40% of scene
-  const cursorStartX = width * 0.7;
-  const cursorStartY = height * 0.3;
+  // ── Cursor ──
+  const cursorStartX = width * 0.65;
+  const cursorStartY = height * 0.35;
   const cursorEndX = width * focal.x;
   const cursorEndY = height * focal.y;
-
   const cursorMoveProgress = interpolate(
-    localFrame,
-    [Math.round(fps * 0.3), Math.round(fps * 1.2)],
-    [0, 1],
+    localFrame, [Math.round(fps * 0.3), Math.round(fps * 1.2)], [0, 1],
     { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
   );
   const cursorEased = getEasing('expoOut')(cursorMoveProgress);
   const cursorX = interpolate(cursorEased, [0, 1], [cursorStartX, cursorEndX]);
   const cursorY = interpolate(cursorEased, [0, 1], [cursorStartY, cursorEndY]);
 
-  // Click ripple at cursor position (fires at 60% of scene)
+  // ── Click ripple ──
   const clickFrame = Math.round(fps * 1.5);
   const clickProgress = interpolate(
-    localFrame,
-    [clickFrame, clickFrame + Math.round(fps * 0.4)],
-    [0, 1],
+    localFrame, [clickFrame, clickFrame + Math.round(fps * 0.4)], [0, 1],
     { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
   );
   const rippleScale = interpolate(clickProgress, [0, 1], [0, 3]);
-  const rippleOpacity = interpolate(clickProgress, [0, 0.3, 1], [0, 0.6, 0]);
+  const rippleOpacity = interpolate(clickProgress, [0, 0.3, 1], [0, 0.5, 0]);
 
-  // ── Device frame dimensions ──
-  // Fill 95% of screen width, maintain 16:9 aspect
+  // ── Device frame ──
   const deviceW = Math.round(width * 0.92);
   const deviceH = Math.round(deviceW * 9 / 16);
   const deviceY = (height - deviceH) / 2 - 20;
   const radius = 12;
   const titleBarH = 40;
 
-  const captionColor = style.captionColor || '#FFFFFF';
-  const accent = style.accentColor || '#e63312';
-
-  // Role icons
-  const roleLabels: Record<string, string> = {
-    hook: '✦', feature_1: '◆', feature_2: '◆', proof: '✓', feature_3: '◆', feature_4: '◆',
-  };
+  // ── URL: use scene.url if provided, else extract from src filename ──
+  const displayUrl = scene.url || (() => {
+    const filename = scene.src.split('/').pop() || '';
+    // Clean URL: no extension, replace underscores with slashes
+    if (filename.includes('landing') || filename.includes('home')) return 'ragflow.io';
+    if (filename.includes('chunk')) return 'ragflow.io/datasets/chunk';
+    if (filename.includes('agent')) return 'ragflow.io/agent';
+    if (filename.includes('arch')) return 'ragflow.io/docs/architecture';
+    if (filename.includes('cloud') || filename.includes('login')) return 'cloud.ragflow.io';
+    if (filename.includes('feature')) return 'ragflow.io/features';
+    return 'ragflow.io';
+  })();
 
   return (
     <AbsoluteFill style={{
-      background: style.bgGradient || `linear-gradient(160deg, ${style.bgColor} 0%, #0a0a0b 100%)`,
+      background: style.bgGradient || `linear-gradient(160deg, ${style.bgColor} 0%, #050508 100%)`,
       opacity: (outState.opacity ?? 1),
     }}>
       {/* ── Subtle background accent glow ── */}
       <div style={{
         position: 'absolute',
-        top: '20%', left: '60%',
-        width: '50%', height: '50%',
-        background: `radial-gradient(ellipse, ${accent}08 0%, transparent 70%)`,
-        filter: 'blur(60px)',
-        opacity: 0.6,
+        top: '15%', left: '50%',
+        width: '60%', height: '60%',
+        background: `radial-gradient(ellipse, ${accent}06 0%, transparent 70%)`,
+        filter: 'blur(80px)',
+        opacity: 0.5,
       }} />
 
       {/* ── DEVICE (browser window) ── */}
@@ -192,12 +167,12 @@ export const ScreencastScene: React.FC<{
         transform: outState.transform,
         borderRadius: radius,
         overflow: 'hidden',
-        boxShadow: '0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08)',
+        boxShadow: '0 30px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.06)',
       }}>
         {/* Browser title bar */}
         <div style={{
           height: titleBarH,
-          background: '#1e293b',
+          background: '#1a1a2e',
           display: 'flex', alignItems: 'center',
           paddingLeft: 16, gap: 8,
           borderBottom: '1px solid rgba(255,255,255,0.05)',
@@ -205,19 +180,17 @@ export const ScreencastScene: React.FC<{
           <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#ff5f57' }} />
           <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#febc2e' }} />
           <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#28c840' }} />
-          {/* URL bar */}
+          {/* URL bar — dynamic */}
           <div style={{
             marginLeft: 20, flex: 1,
-            background: 'rgba(255,255,255,0.06)',
+            background: 'rgba(255,255,255,0.08)',
             borderRadius: 6,
-            padding: '4px 12px',
-            fontSize: 12, color: 'rgba(255,255,255,0.3)',
+            padding: '5px 14px',
+            fontSize: 12, color: 'rgba(255,255,255,0.5)',
             fontFamily: 'monospace',
-            maxWidth: 400,
+            maxWidth: 450,
           }}>
-            {scene.src.includes('chantier') ? '🔒 zefil-terrain.vercel.app/chantier/...' :
-             scene.src.includes('preparer') ? '🔒 zefil-terrain.vercel.app/preparer' :
-             '🔒 zefil-terrain.vercel.app'}
+            🔒 {displayUrl}
           </div>
         </div>
 
@@ -227,7 +200,7 @@ export const ScreencastScene: React.FC<{
           height: deviceH - titleBarH,
           overflow: 'hidden',
           position: 'relative',
-          background: '#f1f5f9',
+          background: '#fff',
         }}>
           <Img
             src={scene.src.startsWith('http') ? scene.src : staticFile(scene.src)}
@@ -239,11 +212,11 @@ export const ScreencastScene: React.FC<{
             }}
           />
 
-          {/* Click ripple at cursor position (inside device) */}
+          {/* Click ripple */}
           {rippleOpacity > 0 && (
             <div style={{
               position: 'absolute',
-              left: cursorEndX - deviceW / 2 - 30, // Approximate cursor pos in device coords
+              left: cursorEndX - deviceW / 2 - 30,
               top: cursorEndY - deviceY - titleBarH - 30,
               width: 60, height: 60,
               borderRadius: '50%',
@@ -263,9 +236,7 @@ export const ScreencastScene: React.FC<{
             pointerEvents: 'none',
             zIndex: 10,
             transform: 'translate(-2px, -2px)',
-            transition: 'left 0.3s, top 0.3s',
           }}>
-            {/* Arrow cursor */}
             <svg width="20" height="20" viewBox="0 0 20 20">
               <path
                 d="M 2 2 L 2 14 L 5 11 L 8 17 L 10 16 L 7 10 L 12 10 Z"
@@ -288,12 +259,11 @@ export const ScreencastScene: React.FC<{
           paddingRight: 80,
           opacity: captionOpacity,
         }}>
-          {/* Bottom gradient overlay for text legibility */}
           <div style={{
             position: 'absolute',
             bottom: 0, left: 0, right: 0,
             height: 250,
-            background: 'linear-gradient(transparent, rgba(0,0,0,0.85) 60%)',
+            background: 'linear-gradient(transparent, rgba(0,0,0,0.88) 60%)',
             pointerEvents: 'none',
           }} />
 
@@ -308,10 +278,8 @@ export const ScreencastScene: React.FC<{
           }} />
 
           <div style={{ position: 'relative' }}>
-            {/* Caption */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25em' }}>
               {scene.caption.split(/\s+/).map((word, i) => {
-                // Skill §4.3: 4-frame stagger, 12-frame per-word, base delay 8 frames
                 const ws = wordStagger(localFrame, 8, fps, i, { stagger: 4, easing: 'backOut' });
                 return (
                   <span key={i} style={{
@@ -329,7 +297,6 @@ export const ScreencastScene: React.FC<{
               })}
             </div>
 
-            {/* Subtitle */}
             {scene.subtitle && (
               <div style={{
                 ...fadeUp(localFrame, Math.round(fps * 0.4), fps, { delay: 4 }),
@@ -345,18 +312,17 @@ export const ScreencastScene: React.FC<{
         </AbsoluteFill>
       )}
 
-      {/* ── Scene indicator (top right, minimal) ── */}
+      {/* ── Scene indicator ── */}
       <div style={{
         position: 'absolute',
         top: 30, right: 40,
-        color: 'rgba(255,255,255,0.3)',
-        fontSize: 16, fontFamily: style.fontFamily, fontWeight: 600,
+        color: 'rgba(255,255,255,0.25)',
+        fontSize: 14, fontFamily: style.fontFamily, fontWeight: 600,
         display: 'flex', alignItems: 'center', gap: 6,
         opacity: captionEnter,
       }}>
-        <span style={{ color: accent }}>{roleLabels[role] || '◆'}</span>
         {sceneIndex + 1} / {totalScenes || 6}
       </div>
-     </AbsoluteFill>
+    </AbsoluteFill>
   );
 };
