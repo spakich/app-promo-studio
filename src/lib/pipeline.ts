@@ -2,7 +2,7 @@
  * API Client — connects the studio UI to the pipeline server
  */
 
-const API_BASE = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.hostname !== 'localhost' ? 'https://app-promo-studio-api.onrender.com' : 'http://localhost:3001');
+const API_BASE = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '192.168.1.100' ? 'https://app-promo-studio-api.onrender.com' : 'http://192.168.1.100:3001');
 
 export interface AnalysisResult {
   category: string;
