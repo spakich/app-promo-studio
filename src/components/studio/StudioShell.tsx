@@ -9,14 +9,15 @@ import { PreviewCanvas } from './PreviewCanvas';
 import { useStudioStore } from '../../store/studio-v2';
 import { STAGE_META } from '../../lib/pipeline-v2';
 import { StoryboardTimeline } from './StoryboardTimeline';
+import { ProjectsScreen } from './ProjectsScreen';
 
-type MobileTab = 'preview' | 'config' | 'timeline';
+type MobileTab = 'projects' | 'preview' | 'config' | 'timeline';
 
 export const StudioShell: React.FC = () => {
   const pipeline = useStudioStore(s => s.pipeline);
   const runPipeline = useStudioStore(s => s.runPipeline);
   const abortPipeline = useStudioStore(s => s.abortPipeline);
-  const [mobileTab, setMobileTab] = React.useState<MobileTab>('preview');
+  const [mobileTab, setMobileTab] = React.useState<MobileTab>('projects');
 
   const isRunning = !['idle', 'done', 'error'].includes(pipeline.stage);
   const isMobile = useIsMobile();
@@ -103,6 +104,11 @@ const MobileLayout: React.FC<{ tab: MobileTab; setTab: (t: MobileTab) => void }>
 
       {/* ── CONTENT ── */}
       <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+        {tab === 'projects' && (
+          <div style={{ flex: 1, overflowY: 'auto', padding: 12 }}>
+            <ProjectsScreen />
+          </div>
+        )}
         {tab === 'preview' && (
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: 8 }}>
             <PreviewCanvas />
@@ -129,6 +135,7 @@ const MobileLayout: React.FC<{ tab: MobileTab; setTab: (t: MobileTab) => void }>
         paddingBottom: 'env(safe-area-inset-bottom, 0px)',
       }}>
         {([
+          { id: 'projects', icon: '📁', label: 'Projets' },
           { id: 'preview', icon: '▶', label: 'Aperçu' },
           { id: 'config', icon: '⚙', label: 'Réglages' },
           { id: 'timeline', icon: '📋', label: 'Scènes' },
